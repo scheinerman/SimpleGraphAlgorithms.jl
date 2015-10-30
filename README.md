@@ -12,3 +12,10 @@ requires that some solvers be loaded. I've used `GLPK` and
 `SimpleGraph`.
 
 * `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
+
+
+## To do list
+
+* Maximum matching
+* Minimum dominating set
+* Chromatic number
