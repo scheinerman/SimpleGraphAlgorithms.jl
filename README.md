@@ -13,9 +13,15 @@ requires that some solvers be loaded. I've used `GLPK` and
 
 * `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
 
+* `max_matching(G)` returns a maximum size matching of a
+`SimpleGraph`.
+
+* `min_dom_set(G)` returns a smallest dominating set of a
+`SimpleGraph`. That is, a smallest set `S` with the property that
+every vertex of `G` either is in `S` or is adjacent to a vertex of
+`S`.
+
 
 ## To do list
 
-* Maximum matching
-* Minimum dominating set
 * Chromatic number
