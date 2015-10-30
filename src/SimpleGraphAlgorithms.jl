@@ -1,6 +1,7 @@
 module SimpleGraphAlgorithms
 using SimpleGraphs
 using MathProgBase
+using JuMP
 
 export max_indep_set, max_clique, max_matching, min_dom_set
 
@@ -61,6 +62,7 @@ function min_dom_set(G::SimpleGraph)
 end
 
 
+include("iso.jl")
 
 
 end # of module SimpleGraphAlgorithms
