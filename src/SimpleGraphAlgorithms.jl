@@ -1,13 +1,13 @@
+module SimpleGraphAlgorithms
 using SimpleGraphs
 using MathProgBase
 
-module SimpleGraphAlgorithms
+export max_indep_set, max_clique
 
 """
 `max_indep_set(G)` returns a maximum size independent set of a
 `SimpleGraph`.
 """
-
 function max_indep_set(G::SimpleGraph)
     n = NV(G)
     A = incidence(G,false)'
