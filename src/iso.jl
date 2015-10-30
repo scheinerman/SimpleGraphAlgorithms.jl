@@ -1,9 +1,10 @@
+export iso
+
 """
-`iso(G,H)` returns a permutation matrix `P` such that `A*P==P*B` where 
+`iso(G,H)` returns a permutation matrix `P` such that `A*P==P*B` where
 `A` is the adjacency matrix of `G` and `B` is the adjacency matrix of `H`.
 An empty matrix is returned if no such `P` can be found.
 """
-
 function iso(G::SimpleGraph, H::SimpleGraph)
     m = Model()
     n = NV(G)
