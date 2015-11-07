@@ -30,6 +30,8 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
   graphs `G` and `H`, respectively. If the graphs are not isomorphic,
   an empty matrix is returned.
 
+* `kcolor(G)` returns a `k`-coloring of `G` (or throws an error if no
+  such coloring exists).
 
 ## Examples
 
