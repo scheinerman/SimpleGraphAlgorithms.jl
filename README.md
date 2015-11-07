@@ -25,10 +25,15 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
 `S`.
 
 * `iso(G,H)` finds an isomorphism between graphs `G` and
+  `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
+  the vertices of `H` that gives the isomorphism. If the graphs are
+  not isomorphic, an error is raised.
+
+* `iso_matrix(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a permutation matrix `P` such that
   `A*P==P*B` where `A` and `B` are the adjacency matrices of the
   graphs `G` and `H`, respectively. If the graphs are not isomorphic,
-  an empty matrix is returned.
+  an error is raised.
 
 * `kcolor(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
@@ -49,26 +54,6 @@ Set([3,5,1])
 
 julia> min_dom_set(G)
 Set([0,10,3])
-
-julia> iso(G,G')
-17x17 Array{Int64,2}:
- 0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0
- 0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0
- 0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1
- 0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0
- 1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0
- 0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0
- 0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0
 
 julia> max_matching(G)
 Set([(2,3),(11,13),(15,16),(0,1),(10,14),(6,7),(4,5),(8,9)])
@@ -94,4 +79,39 @@ Dict{Int64,Int64} with 17 entries:
   1  => 2
 ```
 
+Petersen's graph can be described as either the 5,2-Kneser graph or as
+the complement of the line graph of K(5).
 
+```julia
+julia> G = Kneser(5,2)
+SimpleGraphs.SimpleGraph{Set{Int64}} (10 vertices)
+
+julia> H = complement(line_graph(Complete(5)))
+SimpleGraphs.SimpleGraph{Tuple{Int64,Int64}} (10 vertices)
+
+julia> iso(G,H)
+Dict{Set{Int64},Tuple{Int64,Int64}} with 10 entries:
+  Set([4,1]) => (4,5)
+  Set([4,5]) => (1,5)
+  Set([2,1]) => (3,4)
+  Set([3,5]) => (1,2)
+  Set([2,5]) => (1,3)
+  Set([3,1]) => (2,4)
+  Set([4,3]) => (2,5)
+  Set([4,2]) => (3,5)
+  Set([2,3]) => (2,3)
+  Set([5,1]) => (1,4)
+
+julia> iso_matrix(G,H)
+10x10 Array{Int64,2}:
+ 0  0  0  1  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  0  1
+ 1  0  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  1  0  0
+ 0  0  0  0  0  1  0  0  0  0
+ 0  1  0  0  0  0  0  0  0  0
+ 0  0  0  0  0  0  0  0  1  0
+ 0  0  0  0  0  0  1  0  0  0
+ 0  0  0  0  1  0  0  0  0  0
+ 0  0  1  0  0  0  0  0  0  0
+```

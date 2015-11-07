@@ -49,7 +49,7 @@ function kcolor(G::SimpleGraph, k::Int)
         end
     end
 
-    status = solve(MOD)
+    status = solve(MOD, suppress_warnings=true)
 
     if status != :Optimal
         error(err_msg)
