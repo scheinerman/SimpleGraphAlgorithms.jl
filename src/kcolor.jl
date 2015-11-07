@@ -3,11 +3,15 @@ export kcolor
 """
 `kcolor(G,k)`: Return a `k`-coloring of `G` (or error if none exists).
 """
-function kcolor(G::SimpleGraph, k::Int=3)
+function kcolor(G::SimpleGraph, k::Int)
     VV = vlist(G)
     EE = elist(G)
     n = NV(G)
     m = NE(G)
+
+    if k<1
+        error("Number of colors must be positive")
+    end
 
     err_msg = "This graph is not " * string(k) * " colorable"
 
