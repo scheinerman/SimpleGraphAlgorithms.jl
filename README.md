@@ -29,6 +29,9 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
   the vertices of `H` that gives the isomorphism. If the graphs are
   not isomorphic, an error is raised.
 
+* `iso_check(G,H,d)` checks if the dictionary `d` is an isomorphism
+  from `G` to `H`.
+
 * `iso_matrix(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a permutation matrix `P` such that
   `A*P==P*B` where `A` and `B` are the adjacency matrices of the

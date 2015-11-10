@@ -1,9 +1,9 @@
-export iso, iso_matrix
+export iso, iso_matrix, iso_check
 
 """
 `iso_matrix(G,H)` returns a permutation matrix `P` such that
 `A*P==P*B` where `A` is the adjacency matrix of `G` and `B` is the
-adjacency matrix of `H`.  If the graphs are not isomorphic, an 
+adjacency matrix of `H`.  If the graphs are not isomorphic, an
 error is raised.
 """
 
@@ -34,18 +34,18 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     end
 
     status = solve(m, suppress_warnings=true)
-    
+
     if status != :Optimal
-        error(err_msg)      
+        error(err_msg)
     end
-    
+
     return round(Int,getValue(P))
 end
 
 """
 `iso(G,H)` finds an isomorphism from `G` to `H` (or throws an error if
 the graphs are not isomorphic). Returns a dictionary mapping the
-vertices of `G` to `H`.  
+vertices of `G` to `H`.
 """
 function iso(G::SimpleGraph, H::SimpleGraph)
     err_msg = "The graphs are not isomorphic"
@@ -58,7 +58,7 @@ function iso(G::SimpleGraph, H::SimpleGraph)
     VG = vlist(G)
     VH = vlist(H)
     n = NV(G)
-    
+
     MOD = Model()
 
     @defVar(MOD, x[VG,VH],Bin)
@@ -98,4 +98,43 @@ function iso(G::SimpleGraph, H::SimpleGraph)
         end
     end
     return result
+end
+
+
+"""
+`iso_check(G,H,d)` checks if `d` is an isomorphism from `G` to `H`.
+"""
+function iso_check(G::SimpleGraph, H::SimpleGraph, d::Dict)
+    n = NV(G)
+
+    # standard quick check
+    if n != NV(H) || NE(G) != NE(H) || deg(G) != deg(H) || length(d) != n
+        return false
+    end
+
+    # check keys and values in d match VG and VH, respectively
+    for k in keys(d)
+        if !has(G,k)
+            return false
+        end
+    end
+
+    for v in values(d)
+        if !has(H,v)
+            return false
+        end
+    end
+
+    # Check edges match. Only need to go one way since we determined
+    # that the two graphs have the same number of edges.
+    EE = elist(G)
+    for e in EE
+        v = e[1]
+        w = e[2]
+        if !has(H,d[v],d[w])
+            return false
+        end
+    end
+
+    return true
 end
