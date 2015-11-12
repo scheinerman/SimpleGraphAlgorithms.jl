@@ -12,8 +12,7 @@ error is raised.
 
 function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     n = NV(G)
-
-
+    
     # quickly rule out some easily detected nonisomorphic graphs
     if NV(H) != n || NE(G) != NE(H) || deg(G) != deg(H)
         error(iso_err_msg)
