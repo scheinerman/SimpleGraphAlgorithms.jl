@@ -1,7 +1,6 @@
-export iso, iso_matrix, iso_check, iso2
+export iso, iso_matrix, iso_check, iso2, info_map
 
 const iso_err_msg = "The graphs are not isomorphic"
-
 
 """
 `iso_matrix(G,H)` returns a permutation matrix `P` such that
@@ -9,12 +8,10 @@ const iso_err_msg = "The graphs are not isomorphic"
 adjacency matrix of `H`.  If the graphs are not isomorphic, an
 error is raised.
 """
-
 function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     n = NV(G)
 
-    # quickly rule out some easily detected nonisomorphic graphs
-    if NV(H) != n || NE(G) != NE(H) || deg(G) != deg(H)
+    if !fast_iso_test_basic(G,H)
         error(iso_err_msg)
     end
 
@@ -140,9 +137,6 @@ function iso_check(G::SimpleGraph, H::SimpleGraph, d::Dict)
 end
 
 
-
-
-
 """
 `fast_iso_test_basic(G,H)` is a very quick test to rule out graphs being
 isomorphic by considering the number of vertices, number of edges, and
@@ -155,16 +149,6 @@ function fast_iso_test_basic(G::SimpleGraph, H::SimpleGraph)
         return false
     end
     return true
-end
-
-"""
-`fast_iso_test_degdeg(G,H)` is a quick test to rule out graphs being
-isomorphic by considering their degree sequence sequences. We return
-`false` if the grpahs are provably nonisomorphic. A `true` result does
-*not* imply the graphs are isomorphic.
-"""
-function fast_iso_test_degdeg(G::SimpleGraph, H::SimpleGraph)
-    return sortrows(degdeg(G))==degdeg(H)
 end
 
 
@@ -189,6 +173,7 @@ function degdeg(G::SimpleGraph)
     return sortrows(result)
 end
 
+
 """
 `info_map(G)`:
 We create a dictionary mapping the vertices of `G` to 128-bit integer
@@ -197,7 +182,6 @@ but, we hope, nontwin vertices will have different values. (By *twin*
 we mean a pair of vertices such that there is an automorphism of the
 graph mapping one to the other.)
 """
-
 function info_map(G::SimpleGraph)
     n = NV(G)
     VV = vlist(G)

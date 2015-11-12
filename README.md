@@ -32,7 +32,9 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
 * `iso2(G,H)` has the same functionality as `iso`, but applies various
   preprocessing to speed up the optimization. If the graphs are vertex
   transitive, this probably won't help. But if they have small
-  automorphism groups, this will likely speed things up considerably.
+  automorphism groups, this will likely speed things up
+  considerably. It will also likely detect when the given graphs are
+  not isomorphic faster than `iso` will.
 
 * `iso_check(G,H,d)` checks if the dictionary `d` is an isomorphism
   from `G` to `H`.
@@ -42,6 +44,12 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
   `A*P==P*B` where `A` and `B` are the adjacency matrices of the
   graphs `G` and `H`, respectively. If the graphs are not isomorphic,
   an error is raised.
+
+* `info_map(G)` creates a mapping from the vertices of `G` to 128-bit
+  integers. If there is an automorphism between a pair of vertices,
+  then they will map to the same value, and the converse is *likely*
+  to be true. This is used by `iso2` as part of the preprocessing
+  phase.
 
 * `kcolor(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
