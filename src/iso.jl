@@ -1,5 +1,8 @@
 export iso, iso_matrix, iso_check
 
+const iso_err_msg = "The graphs are not isomorphic"
+
+
 """
 `iso_matrix(G,H)` returns a permutation matrix `P` such that
 `A*P==P*B` where `A` is the adjacency matrix of `G` and `B` is the
@@ -10,11 +13,10 @@ error is raised.
 function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     n = NV(G)
 
-    err_msg = "The graphs are not isomorphic"
 
     # quickly rule out some easily detected nonisomorphic graphs
     if NV(H) != n || NE(G) != NE(H) || deg(G) != deg(H)
-        error(err_msg)
+        error(iso_err_msg)
     end
 
     m = Model()
@@ -36,7 +38,7 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     status = solve(m, suppress_warnings=true)
 
     if status != :Optimal
-        error(err_msg)
+        error(iso_err_msg)
     end
 
     return round(Int,getValue(P))
@@ -48,11 +50,10 @@ the graphs are not isomorphic). Returns a dictionary mapping the
 vertices of `G` to `H`.
 """
 function iso(G::SimpleGraph, H::SimpleGraph)
-    err_msg = "The graphs are not isomorphic"
 
     # quickly rule out some easily detected nonisomorphic graphs
     if NV(G) != NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
-        error(err_msg)
+        error(iso_err_msg)
     end
 
     VG = vlist(G)
@@ -83,7 +84,7 @@ function iso(G::SimpleGraph, H::SimpleGraph)
     status = solve(MOD, suppress_warnings=true)
 
     if status != :Optimal
-        error(err_msg)
+        error(iso_err_msg)
     end
 
     X = getValue(x)
