@@ -1,4 +1,4 @@
-export iso, iso_matrix, iso_check
+export iso, iso_matrix, iso_check, iso2
 
 const iso_err_msg = "The graphs are not isomorphic"
 
@@ -12,7 +12,7 @@ error is raised.
 
 function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     n = NV(G)
-    
+
     # quickly rule out some easily detected nonisomorphic graphs
     if NV(H) != n || NE(G) != NE(H) || deg(G) != deg(H)
         error(iso_err_msg)
@@ -137,4 +137,229 @@ function iso_check(G::SimpleGraph, H::SimpleGraph, d::Dict)
     end
 
     return true
+end
+
+
+
+
+
+"""
+`fast_iso_test_basic(G,H)` is a very quick test to rule out graphs being
+isomorphic by considering the number of vertices, number of edges, and
+degree sequences. Returns `false` if the graphs fail this very basic
+test of isomorphism. A `true` result does *not* imply the graphs are
+isomorphic.
+"""
+function fast_iso_test_basic(G::SimpleGraph, H::SimpleGraph)
+    if NV(G)!=NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
+        return false
+    end
+    return true
+end
+
+"""
+`fast_iso_test_degdeg(G,H)` is a quick test to rule out graphs being
+isomorphic by considering their degree sequence sequences. We return
+`false` if the grpahs are provably nonisomorphic. A `true` result does
+*not* imply the graphs are isomorphic.
+"""
+function fast_iso_test_degdeg(G::SimpleGraph, H::SimpleGraph)
+    return sortrows(degdeg(G))==degdeg(H)
+end
+
+
+"""
+`degdeg(G)` creates an n-by-n matrix where the nonzero entries in a
+row are the degrees of the neighbors of that vertex. The rows are
+lexicographically sorted.
+"""
+function degdeg(G::SimpleGraph)
+    n = NV(G)
+    result = zeros(Int,n,n)
+    VV = vlist(G)
+
+    for k=1:n
+        v = VV[k]
+        dv = [ deg(G,w) for w in G[v] ]
+        dv = sort(dv)
+        dv = [ dv; zeros(Int,n-deg(G,v)) ]
+        result[k,:] = dv
+    end
+
+    return sortrows(result)
+end
+
+"""
+`info_map(G)`:
+We create a dictionary mapping the vertices of `G` to 128-bit integer
+values in such a way that twin vertices *will* have the same value
+but, we hope, nontwin vertices will have different values. (By *twin*
+we mean a pair of vertices such that there is an automorphism of the
+graph mapping one to the other.)
+"""
+
+function info_map(G::SimpleGraph)
+    n = NV(G)
+    VV = vlist(G)
+    H = G'
+
+    # Section 1: Neighborhood degrees
+    M1 = zeros(Int,n,n-1)
+    for k=1:n
+        v = VV[k]
+        rv = [ deg(G,w) for w in G[v] ]
+        rv = [ sort(rv) ; zeros(Int,n-1-deg(G,v)) ]
+        M1[k,:] = rv
+    end
+
+    # Section 2: Complement degrees
+    M2 = zeros(Int,n,n-1)
+    for k=1:n
+        v = VV[k]
+        rv = [ deg(H,w) for w in H[v] ]
+        rv = [ sort(rv) ; zeros(Int,n-1-deg(H,v)) ]
+        M2[k,:] = rv
+    end
+
+    # Section 3: Distances
+    M3 = zeros(Int,n,n-1)
+    for k=1:n
+        v = VV[k]
+        dv = dist(G,v)
+        M3[k,:] = sort(collect(values(dv)))[1:n-1]
+    end
+
+    # Section 4: Distances in complement
+    M4 = zeros(Int,n,n-1)
+    for k=1:n
+        v = VV[k]
+        dv = dist(H,v)
+        M4[k,:] = sort(collect(values(dv)))[1:n-1]
+    end
+
+    M = [M1 M2 M3 M4]
+
+    # println(sortrows(M))  # debug
+
+    T = vertex_type(G)
+    d = Dict{T,Int128}()
+    for k=1:n
+        v = VV[k]
+        d[v] = Int128(hash(M[k,:]))
+    end
+    return d
+end
+
+
+"""
+`iso2(G,H)` is a variant of `iso(G,H)` that first applies various
+heuristics that should speed up processing if the graphs are "far"
+from vertex transitive.
+"""
+function iso2(G::SimpleGraph, H::SimpleGraph)
+
+    # quickly rule out some easily detected nonisomorphic graphs
+    if NV(G) != NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
+        error(iso_err_msg)
+    end
+
+    VG = vlist(G)
+    VH = vlist(H)
+    n = NV(G)
+
+    TG = vertex_type(G)
+    TH = vertex_type(H)
+
+    dG = info_map(G)
+    dH = info_map(H)
+
+    valsG = sort(collect(values(dG)))
+    valsH = sort(collect(values(dH)))
+
+    if valsG != valsH
+        error(iso_err_msg)
+    end
+
+
+    # Create mappings from vertex key values back to the vertices themselves
+
+    xG = Dict{Int128,Set{TG}}()
+    xH = Dict{Int128,Set{TH}}()
+
+
+    for x in valsG
+        xG[x] = Set{TG}()
+        xH[x] = Set{TH}()
+    end
+
+    for v in VG
+        x = dG[v]
+        push!(xG[x],v)
+    end
+
+    for v in VH
+        x = dH[v]
+        push!(xH[x],v)
+    end
+
+    ## for v in unique(valsG)
+    ##     println("G: ", v, ",", xG[v])
+    ##     println("H: ", v, ",", xH[v])
+    ## end
+
+    ##########
+
+    MOD = Model()
+
+    @defVar(MOD, x[VG,VH],Bin)
+
+    for v in VG
+        @addConstraint(MOD, sum{x[v,VH[k]], k=1:n}==1)
+    end
+
+    for w in VH
+        @addConstraint(MOD, sum{x[VG[k],w], k=1:n}==1)
+    end
+
+    for v in VG
+        for w in VH
+            @addConstraint(MOD,
+                           sum{ has(G,v,VG[k])*x[VG[k],w], k=1:n } ==
+                           sum{ x[v,VH[k]]*has(H,VH[k],w), k=1:n }
+                           )
+        end
+    end
+
+
+    # Add contraints based on vertex numbers
+
+    for val in unique(valsG)
+        SG = collect(xG[val])
+        SH = collect(xH[val])
+        s  = length(SG)
+        @addConstraint(MOD,
+                       sum{x[u,v], u in SG, v in SH}==s
+                       )
+    end
+
+
+
+    status = solve(MOD, suppress_warnings=true)
+
+    if status != :Optimal
+        error(iso_err_msg)
+    end
+
+    X = getValue(x)
+
+    result = Dict{vertex_type(G), vertex_type(H)}()
+
+    for v in VG
+        for w in VH
+            if X[v,w] > 0
+                result[v] = w
+            end
+        end
+    end
+    return result
 end
