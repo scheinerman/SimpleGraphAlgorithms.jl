@@ -29,6 +29,11 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
   the vertices of `H` that gives the isomorphism. If the graphs are
   not isomorphic, an error is raised.
 
+* `iso2(G,H)` has the same functionality as `iso`, but applies various
+  preprocessing to speed up the optimization. If the graphs are vertex
+  transitive, this probably won't help. But if they have small
+  automorphism groups, this will likely speed things up considerably.
+
 * `iso_check(G,H,d)` checks if the dictionary `d` is an isomorphism
   from `G` to `H`.
 
