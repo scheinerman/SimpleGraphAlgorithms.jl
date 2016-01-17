@@ -350,9 +350,9 @@ end
 
 
 """
-`uhash(G)` creates a `UInt64` hash of the graph such that isomorphic
+`uhash(G)` creates an `Int128` hash of the graph such that isomorphic
 graphs will produce the same value. We hope that nonisomorphic graphs
 will create different values, but, alas, that need not be the case.
 """
-uhash(G::SimpleGraph) = hash(sort(collect(values(info_map(G)))))
+uhash(G::SimpleGraph) = Int128(hash(sort(collect(values(info_map(G))))))
    

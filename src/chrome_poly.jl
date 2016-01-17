@@ -2,13 +2,14 @@ using Polynomials
 import Base.length, Base.setindex!, Base.getindex, Base.show
 export ChromePolyMemo, chrome_poly
 
-typealias CPM_data Dict{Vector{Int}, Dict{SimpleGraph,Poly{Int}}}
+typealias CPM_pair Tuple{SimpleGraph,Poly{Int}}
+typealias CPM_dict Dict{ Int128, Vector{CPM_pair} }
 
 # This is a device to record previously computed chromatic polynomials
 type ChromePolyMemo
-    D::CPM_data
+    D::CPM_dict
     function ChromePolyMemo()
-        new( CPM_data() )
+        new( CPM_dict() )
     end
 end
 
@@ -31,29 +32,27 @@ this data structure (if it wasn't in there already).
 Short form: `CPM[G] = P`.
 """
 function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::Poly{Int})
-    ds = deg(G)
+    index::Int128 = uhash(G)  # get the signature for this graph
 
-    # have we seen this graph's degree sequence before?
+    # have we seen this graph's uhash before?
     # if no, create a new entry in the Memo
-    if !haskey(CPM.D,ds)
-        dG = Dict{SimpleGraph, Poly{Int}}()
-        dG[G] = P
-        CPM.D[ds] = dG
+    if !haskey(CPM.D,index)
+        CPM.D[index] = [(G,P)]        
         return
     end
 
-    # Otherwise, look through the values associated with this degree
-    # sequence to see if we've seen this graph (or one isomorphic to
-    # it) before.
+    # Otherwise, look through the values associated with this uhash to
+    # see if we've seen this graph (or one isomorphic to it) before.
 
-    dG = CPM.D[ds]  # Recall those graphs with matching deg seq
-    for H in keys(dG)
-        try iso2(G,H)  # if isomorphic, we're done!
+    # Recall those graphs with matching uhash
+    for (H,Q) in CPM.D[index]
+        try iso2(G,H)  # if isomorphic, nothing to add
             return
         end
     end
-    # otherwise, add this polynomial to the dG table
-    dG[G] = P
+    
+    # otherwise, add this polynomial to the end of the list
+    push!(CPM.D[index], (G,P))
 end
 
 setindex!(CPM,P,G) = remember!(CPM,G,P)
@@ -61,17 +60,17 @@ setindex!(CPM,P,G) = remember!(CPM,G,P)
 
 """
 `recall(CPM,G)` look up in CPM to see if we have already computed the
-chromatic polynomial of this graph (or something isomorphic to it.
+chromatic polynomial of this graph (or something isomorphic to it).
 
 Short form: `P = CPM[G]`.
 """
 function recall(CPM::ChromePolyMemo, G::SimpleGraph)
-    ds = deg(G)
-    dG = CPM.D[ds]  # This may throw an error if not found. That's good.
+    ds = uhash(G)
+    SG = CPM.D[ds]  # This may throw an error if not found. That's good.
 
-    for H in keys(dG)
-        try iso(G,H) # we found a copy of this graph!
-            return dG[H]
+    for (H,Q) in SG
+        try iso2(G,H) # we found a copy of this graph!
+            return Q
         end
     end
 
@@ -96,7 +95,6 @@ for future invocations of `chrome_poly` as follows.
 + Later, to compute the chromatic polynomial of another graph, just use
   `chrome_poly(H,CPM)`.
 """
-
 function chrome_poly(G::SimpleGraph, CPM::ChromePolyMemo = ChromePolyMemo())
     n::Int = NV(G)    
     m::Int = NE(G)
@@ -150,18 +148,18 @@ function chrome_poly(G::SimpleGraph, CPM::ChromePolyMemo = ChromePolyMemo())
     
     # Special case to speed up handling leaves
     if min_d==1
-        delete!(G,u)
-        p1 = chrome_poly(G,CPM)
-        add!(G,u,v)
+        GG = deepcopy(G)
+        delete!(GG,u)
+        p1 = chrome_poly(GG,CPM)
         P = p1 * Poly([-1,1])
         CPM[G] = P
         return P
     end
 
     # p1 is chrome_poly of G-e
-    delete!(G,u,v)
-    p1 = chrome_poly(G,CPM)
-    add!(G,u,v)
+    GG = deepcopy(G)
+    delete!(GG,u,v)
+    p1 = chrome_poly(GG,CPM)
 
     # p2 is chrome_poly of G/e
     GG = deepcopy(G)
