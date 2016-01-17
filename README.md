@@ -53,6 +53,9 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
   to be true. This is used by `iso2` as part of the preprocessing
   phase.
 
+* `uhash(G)` creates a hash value for the graph `G` with the property
+   that isomorphic graphs have the same hash value.    
+
 * `kcolor(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
   

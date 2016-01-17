@@ -1,4 +1,4 @@
-export iso, iso_matrix, iso_check, iso2, info_map
+export iso, iso_matrix, iso_check, iso2, info_map, uhash
 
 const iso_err_msg = "The graphs are not isomorphic"
 
@@ -347,3 +347,12 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
     end
     return result
 end
+
+
+"""
+`uhash(G)` creates a `UInt64` hash of the graph such that isomorphic
+graphs will produce the same value. We hope that nonisomorphic graphs
+will create different values, but, alas, that need not be the case.
+"""
+uhash(G::SimpleGraph) = hash(sort(collect(values(info_map(G)))))
+   
