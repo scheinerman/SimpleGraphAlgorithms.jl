@@ -6,6 +6,8 @@ module that rely on integer programming. In addition to requiring the
 which, in turn, requires that some solvers be loaded. I've used `GLPK`
 and `GLPKMathProgInterface`.
 
+**New**: Now requires the `Polynomials` module. 
+
 **Note**: Because these functions rely on solving integer linear
   programs, they can be rather slow for large graphs.
 
@@ -53,6 +55,9 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
 
 * `kcolor(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
+  
+* `chrome_poly(G)` computes the chromatic polynomial
+of `G`. (See the `help` message for more information.)
 
 ## Examples
 
