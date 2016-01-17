@@ -64,6 +64,6 @@ end
 
 include("iso.jl")
 include("kcolor.jl")
-
+include("chrome_poly.jl")
 
 end # of module SimpleGraphAlgorithms

@@ -1,7 +1,6 @@
-using SimpleGraphs
-using SimpleGraphAlgorithms
 using Polynomials
 import Base.length, Base.setindex!, Base.getindex, Base.show
+export ChromePolyMemo, chrome_poly
 
 typealias CPM_data Dict{Vector{Int}, Dict{SimpleGraph,Poly{Int}}}
 
