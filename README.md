@@ -59,8 +59,8 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
 * `kcolor(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
   
-* `chrome_poly(G)` computes the chromatic polynomial
-of `G`. (See the `help` message for more information.)
+* `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
+  `help` message for more information.)
 
 ## Examples
 
