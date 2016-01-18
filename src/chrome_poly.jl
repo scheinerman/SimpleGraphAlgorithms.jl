@@ -1,6 +1,6 @@
 using Polynomials
-import Base.length, Base.setindex!, Base.getindex, Base.show
-export ChromePolyMemo, chrome_poly
+import Base.length
+export chrome_poly, reset_cpm, size_cpm
 
 typealias CPM_pair Tuple{SimpleGraph,Poly{Int}}
 typealias CPM_dict Dict{ Int128, Vector{CPM_pair} }
@@ -11,6 +11,25 @@ type ChromePolyMemo
     function ChromePolyMemo()
         new( CPM_dict() )
     end
+end
+
+_CPM = ChromePolyMemo()
+
+"""
+`reset_cpm()` clears the datastructure of previously computed
+chromatic polynomials.
+"""
+function reset_cpm()
+    global _CPM = ChromePolyMemo()
+    return true
+end
+
+"""
+`size_cpm()` reports the number of graphs held in the datastructure of
+previously computed chromatic polynomials.
+"""
+function size_cpm()
+    return length(_CPM)
 end
 
 function show(io::IO, CPM::ChromePolyMemo)
@@ -37,7 +56,7 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::Poly{Int})
     # have we seen this graph's uhash before?
     # if no, create a new entry in the Memo
     if !haskey(CPM.D,index)
-        CPM.D[index] = [(G,P)]        
+        CPM.D[index] = [(G,P)]
         return
     end
 
@@ -50,7 +69,7 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::Poly{Int})
             return
         end
     end
-    
+
     # otherwise, add this polynomial to the end of the list
     push!(CPM.D[index], (G,P))
 end
@@ -83,20 +102,14 @@ getindex(CPM,G) = recall(CPM,G)
 """
 `chrome_poly(G)` computes the chromatic polynomial of the graph `G`.
 
-This  function  builds  a   datastructure  to  prevent  computing  the
-chromatic polynomial  of the  same graph  twice. To  do this,  it uses
-frequent isomorphism checks. It is possible to save the datastructure 
-for future invocations of `chrome_poly` as follows.
+This function builds a datastructure to prevent computing the
+chromatic polynomial of the same graph twice. To do this, it uses
+frequent isomorphism checks.
 
-+ First, create a `ChromePolyMemo` object like this: `CPM=ChromePolyMemo()`.
-+ Then, call `chrome_poly` with `CPM` as a second argument:
-  `P = chrome_poly(G,CPM)`. Note that `CPM` will be changed by this; 
-  it will be a database of the chromatic polynomials it has already computed.
-+ Later, to compute the chromatic polynomial of another graph, just use
-  `chrome_poly(H,CPM)`.
+See `size_cpm` and `reset_cpm`.
 """
-function chrome_poly(G::SimpleGraph, CPM::ChromePolyMemo = ChromePolyMemo())
-    n::Int = NV(G)    
+function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
+    n::Int = NV(G)
     m::Int = NE(G)
 
     # Special case: no vertices
@@ -123,7 +136,7 @@ function chrome_poly(G::SimpleGraph, CPM::ChromePolyMemo = ChromePolyMemo())
             result *= chrome_poly(H)
         end
         return result
-    end 
+    end
 
     # Special case: Tree
     if m == n-1
@@ -131,7 +144,7 @@ function chrome_poly(G::SimpleGraph, CPM::ChromePolyMemo = ChromePolyMemo())
     end
 
     # See if we've computed this chromatic polynomial of this graph before
-    try P = CPM[G]
+    try P = _CPM[G]
         return P
     end
 
@@ -145,31 +158,31 @@ function chrome_poly(G::SimpleGraph, CPM::ChromePolyMemo = ChromePolyMemo())
     # And choose any neighbor
     v = first(G[u])
 
-    
+
     # Special case to speed up handling leaves
     if min_d==1
         GG = deepcopy(G)
         delete!(GG,u)
-        p1 = chrome_poly(GG,CPM)
+        p1 = chrome_poly(GG)
         P = p1 * Poly([-1,1])
-        CPM[G] = P
+        _CPM[G] = P
         return P
     end
 
     # p1 is chrome_poly of G-e
     GG = deepcopy(G)
     delete!(GG,u,v)
-    p1 = chrome_poly(GG,CPM)
+    p1 = chrome_poly(GG)
 
     # p2 is chrome_poly of G/e
     GG = deepcopy(G)
     contract!(GG,u,v)
-    p2 = chrome_poly(GG,CPM)
+    p2 = chrome_poly(GG)
 
     P = p1 - p2
 
-    CPM[G] = P # save in case we see this graph again
+    _CPM[G] = P # save in case we see this graph again
 
     return P
 end
-    
+
