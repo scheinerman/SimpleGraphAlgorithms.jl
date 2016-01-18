@@ -1,5 +1,5 @@
 using Polynomials
-import Base.length
+import Base.length, Base.setindex!, Base.getindex
 export chrome_poly, reset_cpm, size_cpm
 
 typealias CPM_pair Tuple{SimpleGraph,Poly{Int}}
