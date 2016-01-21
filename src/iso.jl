@@ -286,13 +286,6 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
         push!(xH[x],v)
     end
 
-    ## for v in unique(valsG)
-    ##     println("G: ", v, ",", xG[v])
-    ##     println("H: ", v, ",", xH[v])
-    ## end
-
-    ##########
-
     MOD = Model()
 
     @defVar(MOD, x[VG,VH],Bin)
@@ -350,9 +343,19 @@ end
 
 
 """
-`uhash(G)` creates an `Int128` hash of the graph such that isomorphic
+`uhash(G)` creates an `UInt64` hash of the graph such that isomorphic
 graphs will produce the same value. We hope that nonisomorphic graphs
 will create different values, but, alas, that need not be the case.
 """
-uhash(G::SimpleGraph) = Int128(hash(sort(collect(values(info_map(G))))))
-   
+function uhash(G::SimpleGraph)
+    v1 = sort(collect(values(info_map(G))))
+    P  = char_poly(G)
+    v2 = coeffs(P)
+
+    return hash((v1,v2))
+end
+
+
+
+# uhash(G::SimpleGraph) = Int128(hash(sort(collect(values(info_map(G))))))
+

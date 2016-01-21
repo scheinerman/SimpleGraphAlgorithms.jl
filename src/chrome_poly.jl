@@ -3,7 +3,7 @@ import Base.length, Base.setindex!, Base.getindex
 export chrome_poly, reset_cpm, size_cpm
 
 typealias CPM_pair Tuple{SimpleGraph,Poly{Int}}
-typealias CPM_dict Dict{ Int128, Vector{CPM_pair} }
+typealias CPM_dict Dict{ UInt64, Vector{CPM_pair} }
 
 # This is a device to record previously computed chromatic polynomials
 type ChromePolyMemo
@@ -100,8 +100,8 @@ end
 getindex(CPM,G) = recall(CPM,G)
 
 """
-`chrome_poly(G)` computes the chromatic polynomial of the graph `G`. 
-If `G` is a directe graph, this returns the chromatic polynomial of 
+`chrome_poly(G)` computes the chromatic polynomial of the graph `G`.
+If `G` is a directe graph, this returns the chromatic polynomial of
 `G`'s underlying simple graph.
 
 This function builds a datastructure to prevent computing the
