@@ -14,12 +14,12 @@ and `GLPKMathProgInterface`.
 ## Functions
 
 * `max_indep_set(G)` returns a maximum size independent set of a
-`SimpleGraph`.
+  `SimpleGraph`.
 
 * `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
 
 * `max_matching(G)` returns a maximum size matching of a
-`SimpleGraph`.
+  `SimpleGraph`.
 
 * `min_dom_set(G)` returns a smallest dominating set of a
   `SimpleGraph`. That is, a smallest set `S` with the property that
@@ -29,6 +29,11 @@ and `GLPKMathProgInterface`.
 * `min_vertex_cover(G)` returns a smallest vertex cover of `G`. This
   is a set of vertices `S` such that every edge of `G` has at least 
   one end point in `S`.
+
+* `min_edge_cover(G)` returns a smallest edge cover of `G`. This is
+  a set of edges `F` such that every vertex of `G` is the end point
+  of at least one edge in `F`. **Note**: If `G` has an isolated
+  vertex, then no edge cover is possible and error is generated.
 
 * `iso(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
