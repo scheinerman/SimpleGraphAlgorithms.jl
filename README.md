@@ -27,8 +27,8 @@ and `GLPKMathProgInterface`.
   `S`.
 
 * `min_vertex_cover(G)` returns a smallest vertex cover of `G`. This
-  is a set `S` such that every edge of `G` has at least one end point
-  in `S`.
+  is a set of vertices `S` such that every edge of `G` has at least 
+  one end point in `S`.
 
 * `iso(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
