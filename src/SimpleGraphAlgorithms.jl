@@ -22,21 +22,18 @@ function max_indep_set(G::SimpleGraph)
     return Set(VV[indices])
 end
 
-
 """
 `min_vertex_cover(G)` returns a smallest vertex cover `S` of `G`.
-This is a smallest possible set such that every edge of `G` has one
-or both end points in `S`.
+This is a smallest possible set of vertices such that every edge 
+of `G` has one or both end points in `S`.
 """
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
-
 
 
 """
 `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
 """
 max_clique(G::SimpleGraph) = max_indep_set(G')
-
 
 """
 `max_matching(G)` returns a maximum matching of a `SimpleGraph`.
