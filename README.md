@@ -6,7 +6,7 @@ module that rely on integer programming. In addition to requiring the
 which, in turn, requires that some solvers be loaded. I've used `GLPK`
 and `GLPKMathProgInterface`.
 
-**New**: Now requires the `Polynomials` module. 
+**New**: Now requires the `Polynomials` module.
 
 **Note**: Because these functions rely on solving integer linear
   programs, they can be rather slow for large graphs.
@@ -22,9 +22,13 @@ and `GLPKMathProgInterface`.
 `SimpleGraph`.
 
 * `min_dom_set(G)` returns a smallest dominating set of a
-`SimpleGraph`. That is, a smallest set `S` with the property that
-every vertex of `G` either is in `S` or is adjacent to a vertex of
-`S`.
+  `SimpleGraph`. That is, a smallest set `S` with the property that
+  every vertex of `G` either is in `S` or is adjacent to a vertex of
+  `S`.
+
+* `min_vertex_cover(G)` returns a smallest vertex cover of `G`. This
+  is a set `S` such that every edge of `G` has at least one end point
+  in `S`.
 
 * `iso(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
@@ -54,11 +58,11 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
   phase.
 
 * `uhash(G)` creates a hash value for the graph `G` with the property
-   that isomorphic graphs have the same hash value.    
+   that isomorphic graphs have the same hash value.
 
 * `kcolor(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
-  
+
 * `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
   `help` message for more information.)
 
