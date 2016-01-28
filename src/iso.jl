@@ -349,9 +349,11 @@ will create different values, but, alas, that need not be the case.
 """
 function uhash(G::SimpleGraph)
     v1 = sort(collect(values(info_map(G))))
-    P  = char_poly(G)
-    v2 = coeffs(P)
-
+    v2 = [1.]
+    try
+        P  = char_poly(G)
+        v2 = coeffs(P)
+    end
     return hash((v1,v2))
 end
 
