@@ -56,7 +56,7 @@ function kcolor(G::SimpleGraph, k::Int)
     end
     
     
-    X = getValue(x)
+    X = getvalue(x)
 
     for v in VV
         for c = 1:k
