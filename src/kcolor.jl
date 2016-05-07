@@ -35,17 +35,17 @@ function kcolor(G::SimpleGraph, k::Int)
 
     MOD = Model()
 
-    @defVar(MOD, x[VV,1:k], Bin)
+    @variable(MOD, x[VV,1:k], Bin)
 
     for v in VV
-        @addConstraint(MOD, sum{x[v,i], i=1:k} == 1)
+        @constraint(MOD, sum{x[v,i], i=1:k} == 1)
     end
 
     for e in EE
         u = e[1]
         v = e[2]
         for i=1:k
-            @addConstraint(MOD, x[u,i] + x[v,i] <= 1)
+            @constraint(MOD, x[u,i] + x[v,i] <= 1)
         end
     end
 

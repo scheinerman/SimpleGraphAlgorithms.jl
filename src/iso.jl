@@ -16,19 +16,19 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     end
 
     m = Model()
-    @defVar(m,P[1:n,1:n],Bin)
+    @variable(m,P[1:n,1:n],Bin)
     A = adjacency(G)
     B = adjacency(H)
 
     for i=1:n
         for k=1:n
-            @addConstraint(m,
+            @constraint(m,
                            sum{A[i,j]*P[j,k], j=1:n} ==
                            sum{P[i,j]*B[j,k], j=1:n}
                            )
         end
-        @addConstraint(m, sum{P[i,j], j=1:n}==1)
-        @addConstraint(m, sum{P[j,i], j=1:n}==1)
+        @constraint(m, sum{P[i,j], j=1:n}==1)
+        @constraint(m, sum{P[j,i], j=1:n}==1)
     end
 
     status = solve(m, suppress_warnings=true)
@@ -58,19 +58,19 @@ function iso(G::SimpleGraph, H::SimpleGraph)
 
     MOD = Model()
 
-    @defVar(MOD, x[VG,VH],Bin)
+    @variable(MOD, x[VG,VH],Bin)
 
     for v in VG
-        @addConstraint(MOD, sum{x[v,VH[k]], k=1:n}==1)
+        @constraint(MOD, sum{x[v,VH[k]], k=1:n}==1)
     end
 
     for w in VH
-        @addConstraint(MOD, sum{x[VG[k],w], k=1:n}==1)
+        @constraint(MOD, sum{x[VG[k],w], k=1:n}==1)
     end
 
     for v in VG
         for w in VH
-            @addConstraint(MOD,
+            @constraint(MOD,
                            sum{ has(G,v,VG[k])*x[VG[k],w], k=1:n } ==
                            sum{ x[v,VH[k]]*has(H,VH[k],w), k=1:n }
                            )
@@ -288,19 +288,19 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
 
     MOD = Model()
 
-    @defVar(MOD, x[VG,VH],Bin)
+    @variable(MOD, x[VG,VH],Bin)
 
     for v in VG
-        @addConstraint(MOD, sum{x[v,VH[k]], k=1:n}==1)
+        @constraint(MOD, sum{x[v,VH[k]], k=1:n}==1)
     end
 
     for w in VH
-        @addConstraint(MOD, sum{x[VG[k],w], k=1:n}==1)
+        @constraint(MOD, sum{x[VG[k],w], k=1:n}==1)
     end
 
     for v in VG
         for w in VH
-            @addConstraint(MOD,
+            @constraint(MOD,
                            sum{ has(G,v,VG[k])*x[VG[k],w], k=1:n } ==
                            sum{ x[v,VH[k]]*has(H,VH[k],w), k=1:n }
                            )
@@ -314,7 +314,7 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
         SG = collect(xG[val])
         SH = collect(xH[val])
         s  = length(SG)
-        @addConstraint(MOD,
+        @constraint(MOD,
                        sum{x[u,v], u in SG, v in SH}==s
                        )
     end
