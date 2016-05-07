@@ -37,7 +37,7 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
         error(iso_err_msg)
     end
 
-    return round(Int,getValue(P))
+    return round(Int,getvalue(P))
 end
 
 """
@@ -83,7 +83,7 @@ function iso(G::SimpleGraph, H::SimpleGraph)
         error(iso_err_msg)
     end
 
-    X = getValue(x)
+    X = getvalue(x)
 
     result = Dict{vertex_type(G), vertex_type(H)}()
 
@@ -327,7 +327,7 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
         error(iso_err_msg)
     end
 
-    X = getValue(x)
+    X = getvalue(x)
 
     result = Dict{vertex_type(G), vertex_type(H)}()
 
