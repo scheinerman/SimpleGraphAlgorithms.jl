@@ -1,4 +1,4 @@
-using Polynomials
+using Polynomials, SimplePartitions
 import Base.length, Base.setindex!, Base.getindex
 export chrome_poly, reset_cpm, size_cpm
 
@@ -130,7 +130,7 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
     end
 
     # Special case: disconnected graph
-    comps = components(G)
+    comps = parts(components(G))
     if length(comps) > 1
         result = Poly([1])
         for A in comps
