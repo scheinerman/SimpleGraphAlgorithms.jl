@@ -24,7 +24,7 @@ end
 
 """
 `min_vertex_cover(G)` returns a smallest vertex cover `S` of `G`.
-This is a smallest possible set of vertices such that every edge 
+This is a smallest possible set of vertices such that every edge
 of `G` has one or both end points in `S`.
 """
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
@@ -90,5 +90,6 @@ end
 include("iso.jl")
 include("kcolor.jl")
 include("chrome_poly.jl")
+include("mad.jl")
 
 end # of module SimpleGraphAlgorithms

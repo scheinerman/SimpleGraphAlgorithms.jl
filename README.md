@@ -27,7 +27,7 @@ and `GLPKMathProgInterface`.
   `S`.
 
 * `min_vertex_cover(G)` returns a smallest vertex cover of `G`. This
-  is a set of vertices `S` such that every edge of `G` has at least 
+  is a set of vertices `S` such that every edge of `G` has at least
   one end point in `S`.
 
 * `min_edge_cover(G)` returns a smallest edge cover of `G`. This is
@@ -70,6 +70,8 @@ and `GLPKMathProgInterface`.
 
 * `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
   `help` message for more information.)
+
+* `mad(G)` returns the maximum average degree of `G`.
 
 ## Examples
 
