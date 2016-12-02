@@ -1,8 +1,10 @@
 export mad
+
 """
-`mad(G)` computes the maximum average degree of `G`.
+`mad_model(G)` returns the linear program whose optimum
+value is `mad(G)`.
 """
-function mad(G::SimpleGraph)
+function mad_model(G::SimpleGraph)
   EE = elist(G)
   VV = vlist(G)
 
@@ -34,11 +36,15 @@ function mad(G::SimpleGraph)
 
   @objective(MOD, :Min, z)
 
-  solve(MOD)
-  # println(getvalue(x))
-
-  return getobjectivevalue(MOD)
+  return MOD
 end
 
 
-# @variable(m, x[i=1:10,j=1:10; isodd(i+j)] >= 0)
+"""
+`mad(G)` computes the maximum average degree of `G`.
+"""
+function mad(G::SimpleGraph)
+  MOD = mad_model(G)
+  solve(MOD)
+  return getobjectivevalue(MOD)
+end
