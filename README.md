@@ -71,7 +71,11 @@ and `GLPKMathProgInterface`.
 * `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
   `help` message for more information.)
 
+* `ad(G)` returns the average degree of `G`.
+
 * `mad(G)` returns the maximum average degree of `G`.
+
+* `mad_core(G)` returns a subgraph `H` of `G` for which `ad(H)==mad(G)`.
 
 ## Examples
 
