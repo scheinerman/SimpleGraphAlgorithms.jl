@@ -42,6 +42,7 @@ end
 
 """
 `mad(G)` computes the maximum average degree of `G`.
+See also `mad_core`.
 """
 function mad(G::SimpleGraph)
   MOD, x, VV, EE = mad_model(G)
@@ -94,30 +95,4 @@ function mad_core(G::SimpleGraph)
   end # end while
   error("This can't happen (but it did)")
   return GG
-end
-
-
-
-# For debugging purposes only ...
-function madness(G::SimpleGraph)
-  MOD, x, VV, EE = mad_model(G)
-  opt = getobjectivevalue(MOD)
-  println("mad(G) = $opt\n")
-  n = length(VV)
-  m = length(EE)
-  for i=1:n
-    v = VV[i]
-    println("Vertex $v info")
-    total = 0.0
-    for j=1:m
-      e = EE[j]
-      if in(v,e)
-        val = getvalue(x[i,j])
-        total += val
-        println("Value at edge $e is $val")
-      end
-    end
-    println("Total value = $total: $(opt==total) \n")
-  end
-  nothing
 end
