@@ -23,7 +23,7 @@ function mad_model(G::SimpleGraph)
     # get all edges that have v as an end point
     j_iterator = (j for j=1:m if EE[j][1]==v || EE[j][2]==v)
     j_list = collect(j_iterator)
-    @constraint(MOD, sum{x[i,j],j = j_list}<=z)
+    @constraint(MOD, sum(x[i,j] for j in j_list) <= z)
   end
 
   # edge constraints

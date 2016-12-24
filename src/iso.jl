@@ -23,12 +23,12 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     for i=1:n
         for k=1:n
             @constraint(m,
-                           sum{A[i,j]*P[j,k], j=1:n} ==
-                           sum{P[i,j]*B[j,k], j=1:n}
+                           sum(A[i,j]*P[j,k] for j=1:n) ==
+                           sum(P[i,j]*B[j,k] for j=1:n)
                            )
         end
-        @constraint(m, sum{P[i,j], j=1:n}==1)
-        @constraint(m, sum{P[j,i], j=1:n}==1)
+        @constraint(m, sum(P[i,j] for j=1:n) == 1)
+        @constraint(m, sum(P[j,i] for j=1:n) == 1)
     end
 
     status = solve(m, suppress_warnings=true)
@@ -61,18 +61,18 @@ function iso(G::SimpleGraph, H::SimpleGraph)
     @variable(MOD, x[VG,VH],Bin)
 
     for v in VG
-        @constraint(MOD, sum{x[v,VH[k]], k=1:n}==1)
+        @constraint(MOD, sum(x[v,VH[k]] for k=1:n)==1)
     end
 
     for w in VH
-        @constraint(MOD, sum{x[VG[k],w], k=1:n}==1)
+        @constraint(MOD, sum(x[VG[k],w] for k=1:n)==1)
     end
 
     for v in VG
         for w in VH
             @constraint(MOD,
-                           sum{ has(G,v,VG[k])*x[VG[k],w], k=1:n } ==
-                           sum{ x[v,VH[k]]*has(H,VH[k],w), k=1:n }
+                           sum( has(G,v,VG[k])*x[VG[k],w] for k=1:n ) ==
+                           sum( x[v,VH[k]]*has(H,VH[k],w) for k=1:n )
                            )
         end
     end
@@ -291,18 +291,18 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
     @variable(MOD, x[VG,VH],Bin)
 
     for v in VG
-        @constraint(MOD, sum{x[v,VH[k]], k=1:n}==1)
+        @constraint(MOD, sum(x[v,VH[k]] for k=1:n)==1)
     end
 
     for w in VH
-        @constraint(MOD, sum{x[VG[k],w], k=1:n}==1)
+        @constraint(MOD, sum(x[VG[k],w] for k=1:n)==1)
     end
 
     for v in VG
         for w in VH
             @constraint(MOD,
-                           sum{ has(G,v,VG[k])*x[VG[k],w], k=1:n } ==
-                           sum{ x[v,VH[k]]*has(H,VH[k],w), k=1:n }
+                           sum( has(G,v,VG[k])*x[VG[k],w] for k=1:n ) ==
+                           sum( x[v,VH[k]]*has(H,VH[k],w) for k=1:n )
                            )
         end
     end
@@ -315,7 +315,7 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
         SH = collect(xH[val])
         s  = length(SG)
         @constraint(MOD,
-                       sum{x[u,v], u in SG, v in SH}==s
+                       sum(x[u,v] for u in SG for v in SH)==s
                        )
     end
 
@@ -360,4 +360,3 @@ end
 
 
 # uhash(G::SimpleGraph) = Int128(hash(sort(collect(values(info_map(G))))))
-

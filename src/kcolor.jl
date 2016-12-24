@@ -38,7 +38,7 @@ function kcolor(G::SimpleGraph, k::Int)
     @variable(MOD, x[VV,1:k], Bin)
 
     for v in VV
-        @constraint(MOD, sum{x[v,i], i=1:k} == 1)
+        @constraint(MOD, sum(x[v,i] for i=1:k) == 1)
     end
 
     for e in EE
@@ -54,8 +54,8 @@ function kcolor(G::SimpleGraph, k::Int)
     if status != :Optimal
         error(err_msg)
     end
-    
-    
+
+
     X = getvalue(x)
 
     for v in VV
@@ -67,5 +67,5 @@ function kcolor(G::SimpleGraph, k::Int)
     end
 
     return result
-   
+
 end
