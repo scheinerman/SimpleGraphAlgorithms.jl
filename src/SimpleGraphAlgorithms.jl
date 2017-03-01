@@ -1,6 +1,7 @@
 module SimpleGraphAlgorithms
 using SimpleGraphs
 using MathProgBase
+using Cbc
 using JuMP
 
 export max_indep_set, max_clique, max_matching, min_dom_set
@@ -15,7 +16,7 @@ function max_indep_set(G::SimpleGraph)
     A = incidence(G,false)'
     c = ones(n)
 
-    X = mixintprog(-c,A,'<',1,:Int,0,1)
+    X = mixintprog(-c,A,'<',1,:Int,0,1,CbcSolver())
 
     indices = find(round(Int,X.sol))
     VV = vlist(G)
@@ -42,7 +43,7 @@ function max_matching(G::SimpleGraph)
     A = incidence(G,false)
     c = ones(m)
 
-    X = mixintprog(-c,A,'<',1,:Int,0,1)
+    X = mixintprog(-c,A,'<',1,:Int,0,1,CbcSolver())
 
     indices = find(round(Int,X.sol))
     EE = elist(G)
@@ -62,7 +63,7 @@ function min_edge_cover(G::SimpleGraph)
     M = incidence(G,false)
     c = ones(m)
 
-    X = mixintprog(c,M,'>',1,:Int,0,1)
+    X = mixintprog(c,M,'>',1,:Int,0,1,CbcSolver())
 
     indices = find(round(Int,X.sol))
     EE = elist(G)
@@ -80,7 +81,7 @@ function min_dom_set(G::SimpleGraph)
     A = adjacency(G)+eye(Int,n)
     c = ones(n)
 
-    X = mixintprog(c,A,'>',1,:Int,0,1)
+    X = mixintprog(c,A,'>',1,:Int,0,1,CbcSolver())
 
     indices = find(round(Int,X.sol))
     VV = vlist(G)
