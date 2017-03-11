@@ -3,8 +3,7 @@
 This module provides additional functions for the `SimpleGraphs`
 module that rely on integer programming. In addition to requiring the
 `SimpleGraphs` module, it also requires `JuMP` and `MathProgBase`
-which, in turn, requires that some solvers be loaded. I've used `GLPK`
-and `GLPKMathProgInterface`.
+which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 **New**: Now requires the `Polynomials` module.
 
