@@ -7,6 +7,8 @@ using JuMP
 export max_indep_set, max_clique, max_matching, min_dom_set
 export min_vertex_cover, min_edge_cover
 
+import SimpleGraphs: cache_check, cache_save, cache_recall, cache_save_fast, cache_recall_fast
+
 """
 `max_indep_set(G)` returns a maximum size independent set of a
 `SimpleGraph`.

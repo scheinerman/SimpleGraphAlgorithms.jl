@@ -1,6 +1,8 @@
-export iso, iso_matrix, iso_check, iso2, info_map, uhash
+export iso, iso_matrix, iso_check, iso2, info_map, uhash, degdeg
+
 
 const iso_err_msg = "The graphs are not isomorphic"
+
 
 """
 `iso_matrix(G,H)` returns a permutation matrix `P` such that
@@ -158,6 +160,10 @@ row are the degrees of the neighbors of that vertex. The rows are
 lexicographically sorted.
 """
 function degdeg(G::SimpleGraph)
+    if cache_check(G,:degdeg)
+      return cache_recall(G,:degdeg)
+    end
+
     n = NV(G)
     result = zeros(Int,n,n)
     VV = vlist(G)
@@ -170,7 +176,9 @@ function degdeg(G::SimpleGraph)
         result[k,:] = dv
     end
 
-    return sortrows(result)
+    result = sortrows(result)
+    cache_save(G,:degdeg,result)
+    return result
 end
 
 
@@ -183,6 +191,9 @@ we mean a pair of vertices such that there is an automorphism of the
 graph mapping one to the other.)
 """
 function info_map(G::SimpleGraph)
+    if cache_check(G,:info_map)
+      return cache_recall(G,:info_map)
+    end
     n = NV(G)
     VV = vlist(G)
     H = G'
@@ -231,6 +242,7 @@ function info_map(G::SimpleGraph)
         v = VV[k]
         d[v] = Int128(hash(M[k,:]))
     end
+    cache_save(G,:info_map,d)
     return d
 end
 
@@ -348,13 +360,18 @@ graphs will produce the same value. We hope that nonisomorphic graphs
 will create different values, but, alas, that need not be the case.
 """
 function uhash(G::SimpleGraph)
+    if cache_check(G,:uhash)
+      return cache_recall_fast(G,:uhash)
+    end
     v1 = sort(collect(values(info_map(G))))
     v2 = [1.]
     try
         P  = char_poly(G)
         v2 = coeffs(P)
     end
-    return hash((v1,v2))
+    x = hash((v1,v2))
+    cache_save_fast(G,:uhash,x)
+    return x
 end
 
 

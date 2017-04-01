@@ -45,8 +45,13 @@ end
 See also `mad_core`.
 """
 function mad(G::SimpleGraph)
+  if cache_check(G,:mad)
+    return cache_recall_fast(G,:mad)
+  end
   MOD, x, VV, EE = mad_model(G)
-  return getobjectivevalue(MOD)
+  mval = getobjectivevalue(MOD)
+  cache_save_fast(G,:mad,mval)
+  return mval
 end
 
 """
@@ -59,6 +64,9 @@ ad(G::SimpleGraph) = 2*NE(G)/NV(G)
 `ad(H)==mad(G)`.
 """
 function mad_core(G::SimpleGraph)
+  if cache_check(G,:mad_core)
+    return cache_recall(G,:mad_core)
+  end
   T = vertex_type(G)
   GG = deepcopy(G)
   while true
@@ -74,6 +82,7 @@ function mad_core(G::SimpleGraph)
 
     # if balanced, return
     if abs(ad(GG)-mval) <= err
+      cache_save(G,:mad_core,GG)
       return GG
     end
 
@@ -94,5 +103,6 @@ function mad_core(G::SimpleGraph)
     end
   end # end while
   error("This can't happen (but it did)")
+  cache_save(G,:mad_core,GG)
   return GG
 end
