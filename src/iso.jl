@@ -361,7 +361,7 @@ will create different values, but, alas, that need not be the case.
 """
 function uhash(G::SimpleGraph)
     if cache_check(G,:uhash)
-      return cache_recall_fast(G,:uhash)
+      return cache_recall(G,:uhash)
     end
     v1 = sort(collect(values(info_map(G))))
     v2 = [1.]
@@ -370,7 +370,7 @@ function uhash(G::SimpleGraph)
         v2 = coeffs(P)
     end
     x = hash((v1,v2))
-    cache_save_fast(G,:uhash,x)
+    cache_save(G,:uhash,x)
     return x
 end
 

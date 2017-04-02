@@ -46,11 +46,11 @@ See also `mad_core`.
 """
 function mad(G::SimpleGraph)
   if cache_check(G,:mad)
-    return cache_recall_fast(G,:mad)
+    return cache_recall(G,:mad)
   end
   MOD, x, VV, EE = mad_model(G)
   mval = getobjectivevalue(MOD)
-  cache_save_fast(G,:mad,mval)
+  cache_save(G,:mad,mval)
   return mval
 end
 
