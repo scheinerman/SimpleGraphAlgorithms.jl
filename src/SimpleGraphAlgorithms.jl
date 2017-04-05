@@ -75,6 +75,7 @@ function max_matching(G::SimpleGraph)
     EE = elist(G)
     result = Set(EE[indices])
     cache_save(G,:max_matching,result)
+    return result
 end
 
 """
