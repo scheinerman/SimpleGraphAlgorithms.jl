@@ -14,6 +14,13 @@ import SimpleGraphs.cache_save
 `SimpleGraph`.
 """
 function max_indep_set(G::SimpleGraph)
+    if NV(G)==0
+      T = vertex_type(G)
+      return Set{T}()
+    end
+    if cache_check(G,:max_indep_set)
+      return cache_recall(G,:max_indep_set)
+    end
     n = NV(G)
     A = incidence(G,false)'
     c = ones(n)
@@ -22,7 +29,9 @@ function max_indep_set(G::SimpleGraph)
 
     indices = find(round(Int,X.sol))
     VV = vlist(G)
-    return Set(VV[indices])
+    result = Set(VV[indices])
+    cache_save(G,:max_indep_set,result)
+    return result
 end
 
 """
@@ -35,13 +44,28 @@ min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
 """
 `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
 """
-max_clique(G::SimpleGraph) = max_indep_set(G')
+function max_clique(G::SimpleGraph)
+  if cache_check(G,:max_clique)
+    return cache_recall(G,:max_clique)
+  end
+  result = max_indep_set(G')
+  cache_save(G,:max_clique,result)
+  return result
+end
 
 """
 `max_matching(G)` returns a maximum matching of a `SimpleGraph`.
 """
 function max_matching(G::SimpleGraph)
+    if cache_check(G,:max_matching)
+      return cache_recall(G,:max_matching)
+    end
     m = NE(G)
+    if m == 0
+      T = vertex_type(G)
+      S = Tuple{T,T}
+      return Set{S}()
+    end
     A = incidence(G,false)
     c = ones(m)
 
@@ -49,15 +73,26 @@ function max_matching(G::SimpleGraph)
 
     indices = find(round(Int,X.sol))
     EE = elist(G)
-    return Set(EE[indices])
+    result = Set(EE[indices])
+    cache_save(G,:max_matching,result)
 end
 
 """
-`min_edge_cover(G)` finds a smallest subset `F` of the edges such that
+`ver(G)` finds a smallest subset `F` of the edges such that
 every vertex of `G` is the end point of at least one edge in `F`. An
 error is raised if `G` has a vertex of degree 0.
 """
 function min_edge_cover(G::SimpleGraph)
+    if cache_check(G,:min_edge_cover)
+      return cache_recall(G,:min_edge_cover)
+    end
+
+    if NV(G) == 0
+      T = vertex_type(G)
+      S = Tuple{T,T}
+      return Set{S}()
+    end
+
     if minimum(deg(G))==0
         error("Graph has an isolated vertex; no minimum edge cover exists.")
     end
@@ -69,7 +104,9 @@ function min_edge_cover(G::SimpleGraph)
 
     indices = find(round(Int,X.sol))
     EE = elist(G)
-    return Set(EE[indices])
+    result = Set(EE[indices])
+    cache_save(G,:min_edge_cover,result)
+    return result
 end
 
 """
@@ -79,7 +116,15 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
 `S`.
 """
 function min_dom_set(G::SimpleGraph)
+    if cache_check(G,:min_dom_set)
+      return cache_recall(G,:min_dom_set)
+    end
     n = NV(G)
+    if n==0
+      T = vertex_type(G)
+      return Set{T}()
+    end
+
     A = adjacency(G)+eye(Int,n)
     c = ones(n)
 
@@ -87,7 +132,9 @@ function min_dom_set(G::SimpleGraph)
 
     indices = find(round(Int,X.sol))
     VV = vlist(G)
-    return Set(VV[indices])
+    result = Set(VV[indices])
+    cache_save(G,:min_dom_set,result)
+    return result
 end
 
 include("iso.jl")
