@@ -111,6 +111,10 @@ frequent isomorphism checks.
 See `size_cpm` and `reset_cpm`.
 """
 function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
+  if cache_check(G,:chrome_poly)
+    return G.cache[:chrome_poly]
+  end
+
     n::Int = NV(G)
     m::Int = NE(G)
 
@@ -184,7 +188,7 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
     P = p1 - p2
 
     _CPM[G] = P # save in case we see this graph again
-
+    G.cache[:chrome_poly] = P  # and save in graph's cache too
     return P
 end
 
