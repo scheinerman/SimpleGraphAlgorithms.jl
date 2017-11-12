@@ -27,7 +27,7 @@ function max_indep_set(G::SimpleGraph)
 
     X = mixintprog(-c,A,'<',1,:Int,0,1,CbcSolver())
 
-    indices = find(round(Int,X.sol))
+    indices = find(round.(Int,X.sol))
     VV = vlist(G)
     result = Set(VV[indices])
     cache_save(G,:max_indep_set,result)
@@ -71,7 +71,7 @@ function max_matching(G::SimpleGraph)
 
     X = mixintprog(-c,A,'<',1,:Int,0,1,CbcSolver())
 
-    indices = find(round(Int,X.sol))
+    indices = find(round.(Int,X.sol))
     EE = elist(G)
     result = Set(EE[indices])
     cache_save(G,:max_matching,result)
@@ -103,7 +103,7 @@ function min_edge_cover(G::SimpleGraph)
 
     X = mixintprog(c,M,'>',1,:Int,0,1,CbcSolver())
 
-    indices = find(round(Int,X.sol))
+    indices = find(round.(Int,X.sol))
     EE = elist(G)
     result = Set(EE[indices])
     cache_save(G,:min_edge_cover,result)
@@ -131,7 +131,7 @@ function min_dom_set(G::SimpleGraph)
 
     X = mixintprog(c,A,'>',1,:Int,0,1,CbcSolver())
 
-    indices = find(round(Int,X.sol))
+    indices = find(round.(Int,X.sol))
     VV = vlist(G)
     result = Set(VV[indices])
     cache_save(G,:min_dom_set,result)
