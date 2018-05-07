@@ -3,10 +3,11 @@ using SimpleGraphs
 using MathProgBase
 using JuMP
 
-using Cbc
-# using Gurobi
+# using Cbc
+using Gurobi
 
-SOLVER = CbcSolver
+# SOLVER() = CbcSolver()
+SOLVER() = GurobiSolver(OutputFlag=0)
 
 export max_indep_set, max_clique, max_matching, min_dom_set
 export min_vertex_cover, min_edge_cover
