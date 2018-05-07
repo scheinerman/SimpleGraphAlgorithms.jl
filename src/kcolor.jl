@@ -33,7 +33,7 @@ function kcolor(G::SimpleGraph, k::Int)
         return two_color(G)
     end
 
-    MOD = Model(solver=CbcSolver())
+    MOD = Model(solver=SOLVER())
 
     @variable(MOD, x[VV,1:k], Bin)
 

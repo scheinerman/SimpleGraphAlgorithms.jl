@@ -11,7 +11,7 @@ function mad_model(G::SimpleGraph)
   n = length(VV)
   m = length(EE)
 
-  MOD = Model(solver=CbcSolver())
+  MOD = Model(solver=SOLVER())
 
   # variables
   @variable(MOD, z >= 0)
