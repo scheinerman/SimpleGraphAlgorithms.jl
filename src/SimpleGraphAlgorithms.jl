@@ -3,11 +3,42 @@ using SimpleGraphs
 using MathProgBase
 using JuMP
 
-# using Cbc
+using Cbc
 using Gurobi
 
-# _SOLVER() = CbcSolver()
-_SOLVER() = GurobiSolver(OutputFlag=0)
+my_solver = :Gurobi
+
+
+
+"""
+`set_solver(choice)` selects which optimization solver to use. Currently
+there are only two choices:
+
+* `:Gurobi` -- set the Gurobi solver (with `OutputFlag=0` option)
+* `:Cbc` -- set the Cbc solver.
+
+Choice remains in effect until there's a subsequent call to `set_solver`.
+"""
+function set_solver(choice::Symbol = :Gurobi)
+    global my_solver = choice
+end
+
+
+export set_solver
+
+
+function _SOLVER()
+    if my_solver == :Gurobi
+        return GurobiSolver(OutputFlag=0)
+    end
+    if my_solver == :Cbc
+        return CbcSolver()
+    end
+    error("Solver not properly set")
+end
+
+
+export set_CBC
 
 export max_indep_set, max_clique, max_matching, min_dom_set
 export min_vertex_cover, min_edge_cover
