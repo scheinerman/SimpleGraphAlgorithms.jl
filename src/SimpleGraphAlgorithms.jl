@@ -26,10 +26,19 @@ end
 
 export set_solver
 
+# To change OutputFlag do this:
+# using Gurobi
+# env = Gurobi.Env()
+# setparam!(env,"OutputFlag",0)
+#
+# Other stuff to change:
+# setparam!(env,"Threads", n)  # for n threads
+# setparam!(env,"ConcurrentMIP",k) # for k concurrent MIP solvers 
+
 
 function _SOLVER()
     if my_solver == :Gurobi
-        return GurobiSolver(OutputFlag=0)
+        return GurobiSolver()
     end
     if my_solver == :Cbc
         return CbcSolver()
