@@ -33,7 +33,7 @@ export set_solver
 #
 # Other stuff to change:
 # setparam!(env,"Threads", n)  # for n threads
-# setparam!(env,"ConcurrentMIP",k) # for k concurrent MIP solvers 
+# setparam!(env,"ConcurrentMIP",k) # for k concurrent MIP solvers
 
 
 function _SOLVER()
@@ -83,8 +83,41 @@ end
 `min_vertex_cover(G)` returns a smallest vertex cover `S` of `G`.
 This is a smallest possible set of vertices such that every edge
 of `G` has one or both end points in `S`.
+
+`min_vertex_cover(G,k)` returns the smallest set of vertices `S`
+such that at least `k` edges are indicent with a vertex in `S`.
 """
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
+
+function min_vertex_cover(G::SimpleGraph, k::Int)
+    MOD = Model(solver=GurobiSolver())
+    Vs = vlist(G)
+    Es = elist(G)
+
+    @variable(MOD, x[v in Vs], Bin)
+    @variable(MOD, y[f in Es], Bin)
+
+    # edge constraints
+    for f in Es
+        u,v = f
+        @constraint(MOD, x[u]+x[v] >= y[f])
+    end
+
+    # assure proper size
+    @constraint(MOD, sum(y[f] for f in Es) >= k)
+
+    # we want to minimize the sum of the x[v]'s
+    @objective(MOD, :Min, sum(x[v] for v in Vs))
+
+    solve(MOD)
+
+    XX = getvalue(x)
+    A = Set([v for v in Vs if XX[v]> 0.1])
+    return A
+end
+
+
+
 
 """
 `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
