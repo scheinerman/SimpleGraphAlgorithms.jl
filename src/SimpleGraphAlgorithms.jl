@@ -3,7 +3,6 @@ using SimpleGraphs
 using MathProgBase
 using JuMP
 
-using Cbc
 using Gurobi
 
 my_solver = :Gurobi
@@ -220,5 +219,6 @@ include("iso.jl")
 include("kcolor.jl")
 include("chrome_poly.jl")
 include("mad.jl")
+include("edge-coloring.jl")
 
 end # of module SimpleGraphAlgorithms
