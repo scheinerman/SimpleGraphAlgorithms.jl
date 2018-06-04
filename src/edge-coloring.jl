@@ -6,13 +6,16 @@ export k_edge_color, edge_chromatic_number
 throws an error if one does not exist.
 """
 function k_edge_color(G::SimpleGraph, k::Int)
-    err_msg = "This graph is not " * string(k) * "-edge colorable"
+    err_msg = "This graph is not $k-edge colorable"
     Delta = maximum(deg(G))
     if k<Delta
         error(err_msg)
     end
 
-    err_msg = "This graph is not " * string(k) * " colorable"
+    M = max_matching(G)   # this isn't that expensive
+    if NE(G) > length(M)*k
+        error(err_msg)
+    end
 
     VV = vlist(G)
     EE = elist(G)
