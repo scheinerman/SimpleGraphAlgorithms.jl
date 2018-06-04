@@ -1,9 +1,9 @@
-export kcolor
+export color
 
 """
-`kcolor(G,k)`: Return a `k`-coloring of `G` (or error if none exists).
+`color(G,k)`: Return a `k`-coloring of `G` (or error if none exists).
 """
-function kcolor(G::SimpleGraph, k::Int)
+function color(G::SimpleGraph, k::Int)
     VV = vlist(G)
     EE = elist(G)
     n = NV(G)
