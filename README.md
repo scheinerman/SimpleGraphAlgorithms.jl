@@ -64,8 +64,12 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 * `uhash(G)` creates a hash value for the graph `G` with the property
    that isomorphic graphs have the same hash value.
 
-* `kcolor(G,k)` returns a `k`-coloring of `G` (or throws an error if no
+* `color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
+
+* `edge_color(G,k)` returns a `k`-edge-coloring of `G`.
+
+* `edge_chromatic_number(G)` returns the edge chromatic number of `G`.
 
 * `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
   `help` message for more information.)
