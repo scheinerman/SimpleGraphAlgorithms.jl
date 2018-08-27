@@ -2,4 +2,5 @@ julia 0.7
 SimpleGraphs
 MathProgBase
 JuMP
+Polynomials
 Gurobi
