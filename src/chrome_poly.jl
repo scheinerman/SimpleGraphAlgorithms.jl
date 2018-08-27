@@ -9,7 +9,7 @@ const CPM_pair = Tuple{SimpleGraph,Poly{Int}}
 const CPM_dict = Dict{UInt64,Vector{CPM_pair}}
 
 # This is a device to record previously computed chromatic polynomials
-type ChromePolyMemo
+mutable struct ChromePolyMemo
     D::CPM_dict
     function ChromePolyMemo()
         new( CPM_dict() )
@@ -70,6 +70,7 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::Poly{Int})
     for (H,Q) in CPM.D[index]
         try iso2(G,H)  # if isomorphic, nothing to add
             return
+        catch
         end
     end
 
@@ -93,6 +94,7 @@ function recall(CPM::ChromePolyMemo, G::SimpleGraph)
     for (H,Q) in SG
         try iso2(G,H) # we found a copy of this graph!
             return Q
+        catch
         end
     end
 
@@ -155,6 +157,7 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
     # See if we've computed this chromatic polynomial of this graph before
     try P = _CPM[G]
         return P
+    catch
     end
 
     # Resort to inclusion/exclusion

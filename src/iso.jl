@@ -368,6 +368,7 @@ function uhash(G::SimpleGraph)
     try
         P  = char_poly(G)
         v2 = coeffs(P)
+    catch
     end
     x = hash((v1,v2))
     cache_save(G,:uhash,x)
