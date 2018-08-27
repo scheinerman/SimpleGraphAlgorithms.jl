@@ -3,4 +3,5 @@ SimpleGraphs
 MathProgBase
 JuMP
 Polynomials
+LinearAlgebra
 Gurobi
