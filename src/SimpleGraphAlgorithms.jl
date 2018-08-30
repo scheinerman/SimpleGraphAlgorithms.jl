@@ -218,7 +218,9 @@ end
 include("iso.jl")
 include("kcolor.jl")
 include("chrome_poly.jl")
-include("mad.jl")
 include("edge-coloring.jl")
+
+# include("mad.jl")
+
 
 end # of module SimpleGraphAlgorithms

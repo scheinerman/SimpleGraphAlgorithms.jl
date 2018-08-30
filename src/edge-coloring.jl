@@ -80,6 +80,7 @@ function edge_chromatic_number(G::SimpleGraph)::Int
         f = edge_color(G,d)
         cache_save(G, :edge_chromatic_number, d)
         return d
+    catch
     end
 
     cache_save(G, :edge_chromatic_number, d+1)
