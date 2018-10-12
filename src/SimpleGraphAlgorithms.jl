@@ -203,7 +203,12 @@ function min_dom_set(G::SimpleGraph)
       return Set{T}()
     end
 
-    A = adjacency(G)+eye(Int,n)
+    # A = adjacency(G)+eye(Int,n)
+
+    A = adjacency(G)
+    for j=1:n
+        A[j,j] = 1
+    end
     c = ones(n)
 
     X = mixintprog(c,A,'>',1,:Int,0,1,_SOLVER())

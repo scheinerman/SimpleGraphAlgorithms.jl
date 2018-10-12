@@ -4,6 +4,5 @@ SimplePartitions
 MathProgBase
 JuMP
 Polynomials
-LinearAlgebra
 Gurobi
 Cbc
