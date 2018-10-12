@@ -2,7 +2,7 @@ module SimpleGraphAlgorithms
 using SimpleGraphs
 using MathProgBase
 using JuMP
-
+using Cbc
 using Gurobi
 
 my_solver = :Gurobi
