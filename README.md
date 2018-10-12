@@ -1,5 +1,13 @@
 # SimpleGraphAlgorithms
 
+[![Build Status](https://travis-ci.org/scheinerman/SimpleGraphAlgorithms.jl.svg?branch=master)](https://travis-ci.org/scheinerman/SimpleGraphAlgorithms.jl)
+
+
+[![codecov.io](http://codecov.io/github/scheinerman/SimpleGraphAlgorithms.jl/coverage.svg?branch=master)](http://codecov.io/github/scheinerman/SimpleGraphAlgorithms.jl?branch=master)
+
+
+
+
 This module provides additional functions for the `SimpleGraphs`
 module that rely on integer programming. In addition to requiring the
 `SimpleGraphs` module, it also requires `JuMP` and `MathProgBase`
