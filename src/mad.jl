@@ -29,8 +29,8 @@ function mad_model(G::SimpleGraph)
   # edge constraints
   for j=1:m
     v,w = EE[j]
-    i1 = first(find( x -> x==v, VV))
-    i2 = first(find( x -> x==w, VV))
+    i1 = first(findall( x -> x==v, VV))
+    i2 = first(findall( x -> x==w, VV))
     @constraint(MOD, x[i1,j]+x[i2,j] == 2)
   end
 
