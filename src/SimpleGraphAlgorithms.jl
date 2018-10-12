@@ -3,25 +3,26 @@ using SimpleGraphs
 using MathProgBase
 using JuMP
 using Cbc
-using Gurobi
+# using Gurobi
 
-my_solver = :Gurobi
+my_solver = :Cbc
 
 
+
+_SOLVER = CbcSolver
 
 """
-`set_solver(choice)` selects which optimization solver to use. Currently
-there are only two choices:
-
-* `:Gurobi` -- set the Gurobi solver (with `OutputFlag=0` option)
-* `:Cbc` -- set the Cbc solver.
-
+`set_solver(function)` selects which optimization solver to use.
+For example, `set_solver(CbcSolver)`. To use Gurobi, so this:
+```
+using Gurobi
+set_solver(GurobiSolver)
+```
 Choice remains in effect until there's a subsequent call to `set_solver`.
 """
-function set_solver(choice::Symbol = :Gurobi)
-    global my_solver = choice
+function set_solver(func)
+    global _SOLVER = func
 end
-
 
 export set_solver
 
@@ -33,20 +34,18 @@ export set_solver
 # Other stuff to change:
 # setparam!(env,"Threads", n)  # for n threads
 # setparam!(env,"ConcurrentMIP",k) # for k concurrent MIP solvers
+#
+#
+# function _SOLVER()
+#     if my_solver == :Gurobi
+#         return GurobiSolver()
+#     end
+#     if my_solver == :Cbc
+#         return CbcSolver()
+#     end
+#     error("Solver not properly set")
+# end
 
-
-function _SOLVER()
-    if my_solver == :Gurobi
-        return GurobiSolver()
-    end
-    if my_solver == :Cbc
-        return CbcSolver()
-    end
-    error("Solver not properly set")
-end
-
-
-# export set_CBC
 
 export max_indep_set, max_clique, max_matching, min_dom_set
 export min_vertex_cover, min_edge_cover

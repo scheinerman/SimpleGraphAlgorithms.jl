@@ -4,5 +4,4 @@ SimplePartitions
 MathProgBase
 JuMP
 Polynomials
-Gurobi
 Cbc
