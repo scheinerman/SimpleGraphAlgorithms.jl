@@ -88,7 +88,7 @@ such that at least `k` edges are indicent with a vertex in `S`.
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
 
 function min_vertex_cover(G::SimpleGraph, k::Int)
-    MOD = Model(solver=GurobiSolver())
+    MOD = Model(solver=_SOLVER())
     Vs = vlist(G)
     Es = elist(G)
 
