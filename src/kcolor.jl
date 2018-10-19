@@ -1,4 +1,4 @@
-export color
+export color, chromatic_number
 
 """
 `color(G,k)`: Return a `k`-coloring of `G` (or error if none exists).
@@ -67,5 +67,64 @@ function color(G::SimpleGraph, k::Int)
     end
 
     return result
+end
 
+
+
+
+function chromatic_number(G::SimpleGraph, verb::Bool=false)::Int
+    if cache_check(G,:chromatic_number)
+        return cache_recall(G,:chromatic_number)
+    end
+
+    if NV(G) == 0
+        return 0
+    end
+    if NE(G) == 0
+        return 1
+    end
+
+    n = NV(G)
+    alf = length(max_indep_set(G))
+    lb1 = Int(floor(n/alf))
+    lb2 = length(max_clique(G))
+
+    lb = max(lb1,lb2)
+
+    k =  chromatic_number_work(G,lb,n+1,verb)
+    cache_save(G,:chromatic_number,k)
+    return k
+end
+
+
+
+function chromatic_number_work(G::SimpleGraph, lb::Int, ub::Int, verb::Bool)::Int
+    if verb
+        print("$lb <= chi(G) <= $ub")
+    end
+    if lb == ub
+        if verb
+            println("\tand we're done")
+        end
+        return lb
+    end
+
+    mid = Int(floor((ub+lb)/2))
+
+    # if verb
+    #     print("\ttry k = $mid\t")
+    # end
+
+    try
+        f = color(G,mid)  # success
+        if verb
+            println("\tgraph is $mid-colorable")
+        end
+        return chromatic_number_work(G,lb,mid,verb)
+    catch
+    end
+    if verb
+        println("\tgraph is not $mid-colorable")
+    end
+    return chromatic_number_work(G,mid+1,ub,verb)
 end

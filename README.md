@@ -75,12 +75,15 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 * `color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
 
+* `chromatic_number(G)` returns the least `k` such that `G` is `k`-colorable.
+
+* `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
+  `help` message for more information.)
+  
 * `edge_color(G,k)` returns a `k`-edge-coloring of `G`.
 
 * `edge_chromatic_number(G)` returns the edge chromatic number of `G`.
 
-* `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
-  `help` message for more information.)
 
 * `ad(G)` returns the average degree of `G`.
 

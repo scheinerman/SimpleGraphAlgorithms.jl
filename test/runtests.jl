@@ -46,3 +46,6 @@ A = min_edge_cover(G)
 f = chrome_poly(Cycle(5))
 @test f(2) == 0
 @test f(3) == 30
+
+# Chromatic number
+@test chromatic_number(Petersen()) == 3
