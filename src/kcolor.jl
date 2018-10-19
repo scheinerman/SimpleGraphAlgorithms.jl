@@ -17,6 +17,14 @@ function color(G::SimpleGraph, k::Int)
 
     # Special cases that don't require integer programming
 
+    # see if we know the chromatic number already
+    if cache_check(G,:chromatic_number)
+        chi = cache_recall(G,:chromatic_number)
+        if k<chi
+            error(err_msg)
+        end
+    end
+
     result = Dict{vertex_type(G),Int}()
 
     if k==1
@@ -84,14 +92,18 @@ function chromatic_number(G::SimpleGraph, verb::Bool=false)::Int
         return 1
     end
 
+    # lower bound: larger of clique size or n/alpha
     n = NV(G)
     alf = length(max_indep_set(G))
     lb1 = Int(floor(n/alf))
     lb2 = length(max_clique(G))
-
     lb = max(lb1,lb2)
 
-    k =  chromatic_number_work(G,lb,n+1,verb)
+    # upper bound: try a random greedy coloring
+    f = greedy_color(G)
+    ub = maximum(values(f))
+
+    k =  chromatic_number_work(G,lb,ub,verb)
     cache_save(G,:chromatic_number,k)
     return k
 end
@@ -110,10 +122,6 @@ function chromatic_number_work(G::SimpleGraph, lb::Int, ub::Int, verb::Bool)::In
     end
 
     mid = Int(floor((ub+lb)/2))
-
-    # if verb
-    #     print("\ttry k = $mid\t")
-    # end
 
     try
         f = color(G,mid)  # success
