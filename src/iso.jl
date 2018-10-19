@@ -1,4 +1,4 @@
-export iso, iso_matrix, iso_check, iso2, info_map, uhash, degdeg
+export iso, iso_matrix, iso_check, iso2, info_map, uhash, degdeg, fast_iso_test
 
 
 const iso_err_msg = "The graphs are not isomorphic"
@@ -153,6 +153,22 @@ function fast_iso_test_basic(G::SimpleGraph, H::SimpleGraph)
     return true
 end
 
+"""
+`fast_iso_test(G,H)` applies various heuristics to see if
+the graphs *might* be isomorphic. A `false` return certifies the
+graphs are **not** isomorphic; a `true` result indicates the
+graphs might be (indeed, likely are) isomorphic.
+"""
+function fast_iso_test(G::SimpleGraph, H::SimpleGraph)
+    if !fast_iso_test_basic(G,H)
+        return false
+    end
+    f = info_map(G)
+    g = info_map(H)
+    fv = sort(collect(values(f)))
+    gv = sort(collect(values(g)))
+    return fv == gv
+end
 
 """
 `degdeg(G)` creates an n-by-n matrix where the nonzero entries in a
@@ -176,7 +192,7 @@ function degdeg(G::SimpleGraph)
         result[k,:] = dv
     end
 
-    result = sortrows(result)
+    result = sortslices(result,dims=1)
     cache_save(G,:degdeg,result)
     return result
 end
@@ -255,7 +271,7 @@ from vertex transitive.
 function iso2(G::SimpleGraph, H::SimpleGraph)
 
     # quickly rule out some easily detected nonisomorphic graphs
-    if NV(G) != NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
+    if !fast_iso_test(G,H)
         error(iso_err_msg)
     end
 
@@ -269,18 +285,13 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
     dG = info_map(G)
     dH = info_map(H)
 
-    valsG = sort(collect(values(dG)))
-    valsH = sort(collect(values(dH)))
-
-    if valsG != valsH
-        error(iso_err_msg)
-    end
-
-
     # Create mappings from vertex key values back to the vertices themselves
 
     xG = Dict{Int128,Set{TG}}()
     xH = Dict{Int128,Set{TH}}()
+
+    valsG = sort(collect(values(dG)))
+    valsH = sort(collect(values(dH)))
 
 
     for x in valsG
