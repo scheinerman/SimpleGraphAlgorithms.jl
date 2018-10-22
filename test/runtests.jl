@@ -49,3 +49,13 @@ f = chrome_poly(Cycle(5))
 
 # Chromatic number
 @test chromatic_number(Petersen()) == 3
+
+G = Spindle()
+add!(G,4,0)
+H = Spindle()
+add!(H,7,0)
+@test fast_iso_test(G,H)
+f = iso2(G,H)
+@test f[0] == 0
+g = iso(G,H)
+@test g[0] == 0
