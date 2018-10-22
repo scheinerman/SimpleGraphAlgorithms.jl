@@ -123,16 +123,20 @@ function chromatic_number_work(G::SimpleGraph, lb::Int, ub::Int, verb::Bool)::In
 
     mid = Int(floor((ub+lb)/2))
 
+    if verb
+        print("\tlooking for a $mid coloring")
+    end
+
     try
         f = color(G,mid)  # success
         if verb
-            println("\tgraph is $mid-colorable")
+            println("\tfound")
         end
         return chromatic_number_work(G,lb,mid,verb)
     catch
     end
     if verb
-        println("\tgraph is not $mid-colorable")
+        println("\tno such coloring")
     end
     return chromatic_number_work(G,mid+1,ub,verb)
 end
