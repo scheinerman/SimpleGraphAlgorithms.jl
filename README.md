@@ -54,6 +54,8 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
   considerably. It will also likely detect when the given graphs are
   not isomorphic faster than `iso` will.
 
+* `iso_check(G,H)` checks if the two graphs are isomorphic.
+
 * `iso_check(G,H,d)` checks if the dictionary `d` is an isomorphism
   from `G` to `H`.
 
@@ -79,7 +81,7 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 * `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
   `help` message for more information.)
-  
+
 * `edge_color(G,k)` returns a `k`-edge-coloring of `G`.
 
 * `edge_chromatic_number(G)` returns the edge chromatic number of `G`.

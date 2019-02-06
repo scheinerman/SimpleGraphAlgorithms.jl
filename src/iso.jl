@@ -138,6 +138,18 @@ function iso_check(G::SimpleGraph, H::SimpleGraph, d::Dict)
     return true
 end
 
+"""
+`iso_check(G,H)` returns `true` if the two graphs are isomorphic and `false`
+otherwise.
+"""
+function iso_check(G::SimpleGraph, H::SimpleGraph)::Bool
+    try
+        f = iso(G,H)
+    catch
+        return false
+    end
+    return true
+end
 
 """
 `fast_iso_test_basic(G,H)` is a very quick test to rule out graphs being
