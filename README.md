@@ -54,9 +54,9 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
   considerably. It will also likely detect when the given graphs are
   not isomorphic faster than `iso` will.
 
-* `iso_check(G,H)` checks if the two graphs are isomorphic.
+* `is_iso(G,H)` checks if the two graphs are isomorphic.
 
-* `iso_check(G,H,d)` checks if the dictionary `d` is an isomorphism
+* `is_iso(G,H,d)` checks if the dictionary `d` is an isomorphism
   from `G` to `H`.
 
 * `iso_matrix(G,H)` finds an isomorphism between graphs `G` and

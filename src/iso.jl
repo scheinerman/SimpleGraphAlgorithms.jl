@@ -1,4 +1,4 @@
-export iso, iso_matrix, iso_check, iso2, info_map, uhash, degdeg, fast_iso_test
+export iso, iso_matrix, is_iso, iso2, info_map, uhash, degdeg, fast_iso_test
 
 
 const iso_err_msg = "The graphs are not isomorphic"
@@ -101,9 +101,9 @@ end
 
 
 """
-`iso_check(G,H,d)` checks if `d` is an isomorphism from `G` to `H`.
+`is_iso(G,H,d)` checks if `d` is an isomorphism from `G` to `H`.
 """
-function iso_check(G::SimpleGraph, H::SimpleGraph, d::Dict)
+function is_iso(G::SimpleGraph, H::SimpleGraph, d::Dict)
     n = NV(G)
 
     # standard quick check
@@ -139,10 +139,10 @@ function iso_check(G::SimpleGraph, H::SimpleGraph, d::Dict)
 end
 
 """
-`iso_check(G,H)` returns `true` if the two graphs are isomorphic and `false`
+`is_iso(G,H)` returns `true` if the two graphs are isomorphic and `false`
 otherwise.
 """
-function iso_check(G::SimpleGraph, H::SimpleGraph)::Bool
+function is_iso(G::SimpleGraph, H::SimpleGraph)::Bool
     try
         f = iso(G,H)
     catch

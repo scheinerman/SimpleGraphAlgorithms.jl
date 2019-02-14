@@ -13,7 +13,7 @@ f = iso(G,G')
 @test length(f) == 17
 f = iso2(G,G')
 @test length(f) == 17
-@test iso_check(G,G')
+@test is_iso(G,G')
 
 # Edge matching
 M = max_matching(G)
