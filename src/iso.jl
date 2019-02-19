@@ -17,7 +17,7 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
         error(iso_err_msg)
     end
 
-    m = Model(solver=_SOLVER())
+    m = Model(with_optimizer(my_solver.Optimizer))
     @variable(m,P[1:n,1:n],Bin)
     A = adjacency(G)
     B = adjacency(H)
@@ -33,13 +33,14 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
         @constraint(m, sum(P[j,i] for j=1:n) == 1)
     end
 
-    status = solve(m, suppress_warnings=true)
+    optimize!(m)
+    status = Int(termination_status(m))
 
-    if status != :Optimal
+    if status != 1
         error(iso_err_msg)
     end
 
-    return round(Int,getvalue(P))
+    return Int.(value.(P))
 end
 
 """
@@ -58,7 +59,7 @@ function iso(G::SimpleGraph, H::SimpleGraph)
     VH = vlist(H)
     n = NV(G)
 
-    MOD = Model(solver=_SOLVER())
+    MOD = Model(with_optimizer(my_solver.Optimizer))
 
     @variable(MOD, x[VG,VH],Bin)
 
@@ -79,13 +80,14 @@ function iso(G::SimpleGraph, H::SimpleGraph)
         end
     end
 
-    status = solve(MOD, suppress_warnings=true)
+    optimize!(MOD)
+    status = Int(termination_status(MOD))
 
-    if status != :Optimal
+    if status != 1
         error(iso_err_msg)
     end
 
-    X = getvalue(x)
+    X = value.(x)
 
     result = Dict{vertex_type(G), vertex_type(H)}()
 
@@ -321,7 +323,7 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
         push!(xH[x],v)
     end
 
-    MOD = Model(solver=_SOLVER())
+    MOD = Model(with_optimizer(my_solver.Optimizer))
 
     @variable(MOD, x[VG,VH],Bin)
 
@@ -354,15 +356,14 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
                        )
     end
 
+    optimize!(MOD)
+    status = Int(termination_status(MOD))
 
-
-    status = solve(MOD, suppress_warnings=true)
-
-    if status != :Optimal
+    if status != 1
         error(iso_err_msg)
     end
 
-    X = getvalue(x)
+    X = value.(x)
 
     result = Dict{vertex_type(G), vertex_type(H)}()
 
@@ -397,7 +398,3 @@ function uhash(G::SimpleGraph)
     cache_save(G,:uhash,x)
     return x
 end
-
-
-
-# uhash(G::SimpleGraph) = Int128(hash(sort(collect(values(info_map(G))))))

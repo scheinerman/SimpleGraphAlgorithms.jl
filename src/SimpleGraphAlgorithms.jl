@@ -5,8 +5,7 @@ using JuMP
 using Cbc
 # using Gurobi
 
-my_solver = :Cbc
-
+my_solver = Cbc
 
 
 _SOLVER = CbcSolver
@@ -24,7 +23,16 @@ function set_solver(func)
     global _SOLVER = func
 end
 
-export set_solver
+
+"""
+`set_optimizer(OPT::Module=Cbc)` is used to specify what optimization
+module we want to use. For example: `set_optimizer(Gurobi)`.
+"""
+function set_optimizer(OPT::Module = Cbc)
+    global my_solver = OPT
+end
+
+export set_optimizer
 
 # To change OutputFlag do this:
 # using Gurobi
@@ -88,7 +96,7 @@ such that at least `k` edges are indicent with a vertex in `S`.
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
 
 function min_vertex_cover(G::SimpleGraph, k::Int)
-    MOD = Model(solver=_SOLVER())
+    MOD = Model(with_optimizer(my_solver.Optimizer))
     Vs = vlist(G)
     Es = elist(G)
 
@@ -105,11 +113,15 @@ function min_vertex_cover(G::SimpleGraph, k::Int)
     @constraint(MOD, sum(y[f] for f in Es) >= k)
 
     # we want to minimize the sum of the x[v]'s
-    @objective(MOD, :Min, sum(x[v] for v in Vs))
+    @objective(MOD, Min, sum(x[v] for v in Vs))
 
-    solve(MOD)
+    optimize!(MOD)
+    status = Int(termination_status(MOD))
+    if status != 1
+        error("Cannot find such a minimum vertex cover")
+    end
 
-    XX = getvalue(x)
+    XX = value.(x)
     A = Set([v for v in Vs if XX[v]> 0.1])
     return A
 end

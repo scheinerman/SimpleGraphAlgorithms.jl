@@ -113,7 +113,7 @@ Set([0,10,3])
 julia> max_matching(G)
 Set([(2,3),(11,13),(15,16),(0,1),(10,14),(6,7),(4,5),(8,9)])
 
-julia> kcolor(G,6)
+julia> color(G,6)
 Dict{Int64,Int64} with 17 entries:
   2  => 1
   16 => 5
@@ -170,3 +170,21 @@ julia> iso_matrix(G,H)
  0  0  0  0  1  0  0  0  0  0
  0  0  1  0  0  0  0  0  0  0
 ```
+
+## Using Another Solver
+
+Example:
+```julia
+julia> using Gurobi
+
+julia> set_optimizer(Gurobi)
+Gurobi
+```
+Now the functions in this module will use the Gurobi solver. To switch
+back to the default `Cbc` solver
+use either `set_optimizer()` or `set_optimizer(Cbc)`.
+
+## To Do
+
+The optimizers output a lot of diagnostics. I should figure out how to
+optionally suppress that.

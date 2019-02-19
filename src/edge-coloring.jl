@@ -27,7 +27,7 @@ function edge_color(G::SimpleGraph, k::Int)
 
     result = Dict{ET,Int}()
 
-    MOD = Model(solver=_SOLVER())
+    MOD = Model(with_optimizer(my_solver.Optimizer))
     @variable(MOD, x[EE,1:k], Bin)
 
     # Every edge must have exactly one color
@@ -49,12 +49,14 @@ function edge_color(G::SimpleGraph, k::Int)
         end
     end
 
-    status = solve(MOD,suppress_warnings=true)
-    if status != :Optimal
+    optimize!(MOD)
+    status = Int(termination_status(MOD))
+
+    if status != 1
         error(err_msg)
     end
 
-    X = getvalue(x)
+    X = value.(x)
     for ee in EE
         for t=1:k
             if X[ee,t] > 0

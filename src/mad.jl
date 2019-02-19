@@ -11,7 +11,7 @@ function mad_model(G::SimpleGraph)
   n = length(VV)
   m = length(EE)
 
-  MOD = Model(solver=_SOLVER())
+  MOD = Model(with_optimizer(my_solver.Optimizer))
 
   # variables
   @variable(MOD, z >= 0)
@@ -34,8 +34,8 @@ function mad_model(G::SimpleGraph)
     @constraint(MOD, x[i1,j]+x[i2,j] == 2)
   end
 
-  @objective(MOD, :Min, z)
-  solve(MOD)
+  @objective(MOD, Min, z)
+  optimize!(MOD)
   return MOD, x, VV, EE
 end
 
@@ -49,7 +49,7 @@ function mad(G::SimpleGraph)
     return cache_recall(G,:mad)
   end
   MOD, x, VV, EE = mad_model(G)
-  mval = getobjectivevalue(MOD)
+  mval = objective_value(MOD)
   cache_save(G,:mad,mval)
   return mval
 end
@@ -78,7 +78,7 @@ function mad_core(G::SimpleGraph)
     n = length(VV)
     m = length(EE)
     err = 0.1/n
-    mval = getobjectivevalue(MOD)
+    mval = objective_value(MOD)
 
     # if balanced, return
     if abs(ad(GG)-mval) <= err
@@ -93,7 +93,7 @@ function mad_core(G::SimpleGraph)
       for j=1:m
         e = EE[j]
         if in(v,e)
-          val = getvalue(x[i,j])
+          val = value(x[i,j])
           total += val
         end
       end

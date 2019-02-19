@@ -41,7 +41,7 @@ function color(G::SimpleGraph, k::Int)
         return two_color(G)
     end
 
-    MOD = Model(solver=_SOLVER())
+    MOD = Model(with_optimizer(my_solver.Optimizer))
 
     @variable(MOD, x[VV,1:k], Bin)
 
@@ -57,14 +57,15 @@ function color(G::SimpleGraph, k::Int)
         end
     end
 
-    status = solve(MOD, suppress_warnings=true)
+    optimize!(MOD)
+    status = Int(termination_status(MOD))
 
-    if status != :Optimal
+    if status != 1
         error(err_msg)
     end
 
 
-    X = getvalue(x)
+    X = value.(x)
 
     for v in VV
         for c = 1:k
