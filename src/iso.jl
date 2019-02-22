@@ -389,12 +389,19 @@ function uhash(G::SimpleGraph)
     end
     v1 = sort(collect(values(info_map(G))))
     v2 = [1.]
+    v3 = [1.]
     try
         P  = char_poly(G)
         v2 = coeffs(P)
     catch
     end
-    x = hash((v1,v2))
+
+    try
+        P = char_poly(G,laplace)
+        v3 = coeffs(P)
+    catch
+    end
+    x = hash((v1,v2,v3))
     cache_save(G,:uhash,x)
     return x
 end
