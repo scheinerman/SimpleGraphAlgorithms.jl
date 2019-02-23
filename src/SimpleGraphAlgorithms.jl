@@ -2,37 +2,39 @@ module SimpleGraphAlgorithms
 using SimpleGraphs
 using MathProgBase
 using JuMP
-using Cbc
-# using Gurobi
+using Cbc, Gurobi
 
-my_solver = Cbc
+my_solver = Cbc       # this is used by JuMP
+_SOLVER = CbcSolver   # this is used by MathProgBase
+_OPTS = Dict()        # to pass options to JuMP optimizers
 
+export use_Cbc, use_Gurobi
 
-_SOLVER = CbcSolver
-
-"""
-`set_solver(function)` selects which optimization solver to use.
-For example, `set_solver(CbcSolver)`. To use Gurobi, so this:
-```
-using Gurobi
-set_solver(GurobiSolver)
-```
-Choice remains in effect until there's a subsequent call to `set_solver`.
-"""
-function set_solver(func)
-    global _SOLVER = func
+function use_Cbc(verbose::Bool=false)
+    global _SOLVER = CbcSolver
+    global my_solver = Cbc
+    if verbose
+        global _OPTS = Dict(:logLevel=>1)
+    else
+        global _OPTS = Dict(:logLevel=>0)
+    end
+    nothing
 end
 
 
-"""
-`set_optimizer(OPT::Module=Cbc)` is used to specify what optimization
-module we want to use. For example: `set_optimizer(Gurobi)`.
-"""
-function set_optimizer(OPT::Module = Cbc)
-    global my_solver = OPT
+function use_Gurobi(verbose::Bool=false)
+    global _SOLVER = GurobiSolver
+    global my_solver = Gurobi
+    if verbose
+        global _OPTS = Dict(:OutputFlag=>1)
+    else
+        global _OPTS = Dict(:OutputFlag=>0)
+    end
+    nothing
 end
 
-export set_optimizer
+use_Cbc()
+
 
 # To change OutputFlag do this:
 # using Gurobi
@@ -96,7 +98,7 @@ such that at least `k` edges are indicent with a vertex in `S`.
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
 
 function min_vertex_cover(G::SimpleGraph, k::Int)
-    MOD = Model(with_optimizer(my_solver.Optimizer))
+    MOD = Model(with_optimizer(my_solver.Optimizer;_OPTS...))
     Vs = vlist(G)
     Es = elist(G)
 

@@ -5,3 +5,4 @@ MathProgBase
 JuMP
 Polynomials
 Cbc
+Gurobi

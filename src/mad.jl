@@ -11,7 +11,7 @@ function mad_model(G::SimpleGraph)
   n = length(VV)
   m = length(EE)
 
-  MOD = Model(with_optimizer(my_solver.Optimizer))
+  MOD = Model(with_optimizer(my_solver.Optimizer;_OPTS...))
 
   # variables
   @variable(MOD, z >= 0)

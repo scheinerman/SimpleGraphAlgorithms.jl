@@ -171,20 +171,16 @@ julia> iso_matrix(G,H)
  0  0  1  0  0  0  0  0  0  0
 ```
 
-## Using Another Solver
+## Setting Solver and its Options
 
-Example:
-```julia
-julia> using Gurobi
+By default, the `Cbc` solver is used for integer programming. However, the
+`Gurobi` solver is supported as well. The functions `use_Cbc()` and `use_Gurobi()`
+set which optimizer to use.
 
-julia> set_optimizer(Gurobi)
-Gurobi
-```
-Now the functions in this module will use the Gurobi solver. To switch
-back to the default `Cbc` solver
-use either `set_optimizer()` or `set_optimizer(Cbc)`.
+In addition, an optional argument can be passed to turn on verbose reporting,
+e.g., `use_Cbc(true)`. (The default is `false`.)
 
 ## To Do
 
-The optimizers output a lot of diagnostics. I should figure out how to
-optionally suppress that.
+I plan to reimplement various functions purely in `JuMP` and not use calls to
+the `mixintprog` function from `MathProgBase`.
