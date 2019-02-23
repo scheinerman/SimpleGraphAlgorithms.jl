@@ -1,18 +1,20 @@
 module SimpleGraphAlgorithms
 using SimpleGraphs
-using MathProgBase
+# using MathProgBase
 using JuMP
 using Cbc, Gurobi
 
-my_solver = Cbc       # this is used by JuMP
-_SOLVER = CbcSolver   # this is used by MathProgBase
+_SOLVER = Cbc       # this is used by JuMP
 _OPTS = Dict()        # to pass options to JuMP optimizers
 
 export use_Cbc, use_Gurobi
 
+"""
+`use_Cbc(verbose=false)` sets the optimization software
+to be the `Cbc` solver.
+"""
 function use_Cbc(verbose::Bool=false)
-    global _SOLVER = CbcSolver
-    global my_solver = Cbc
+    global _SOLVER = Cbc
     if verbose
         global _OPTS = Dict(:logLevel=>1)
     else
@@ -21,10 +23,12 @@ function use_Cbc(verbose::Bool=false)
     nothing
 end
 
-
+"""
+`use_Gurobi(verbose=false)` sets the optimization software
+to be the `Gurobi` solver.
+"""
 function use_Gurobi(verbose::Bool=false)
-    global _SOLVER = GurobiSolver
-    global my_solver = Gurobi
+    global _SOLVER = Gurobi
     if verbose
         global _OPTS = Dict(:OutputFlag=>1)
     else
@@ -34,27 +38,6 @@ function use_Gurobi(verbose::Bool=false)
 end
 
 use_Cbc()
-
-
-# To change OutputFlag do this:
-# using Gurobi
-# env = Gurobi.Env()
-# setparam!(env,"OutputFlag",0)
-#
-# Other stuff to change:
-# setparam!(env,"Threads", n)  # for n threads
-# setparam!(env,"ConcurrentMIP",k) # for k concurrent MIP solvers
-#
-#
-# function _SOLVER()
-#     if my_solver == :Gurobi
-#         return GurobiSolver()
-#     end
-#     if my_solver == :Cbc
-#         return CbcSolver()
-#     end
-#     error("Solver not properly set")
-# end
 
 
 export max_indep_set, max_clique, max_matching, min_dom_set
@@ -67,24 +50,28 @@ import SimpleGraphs.cache_save
 `SimpleGraph`.
 """
 function max_indep_set(G::SimpleGraph)
-    if NV(G)==0
-      T = vertex_type(G)
-      return Set{T}()
-    end
     if cache_check(G,:max_indep_set)
-      return cache_recall(G,:max_indep_set)
+        return cache_recall(G,:max_indep_set)
     end
-    n = NV(G)
-    A = incidence(G,false)'
-    c = ones(n)
-
-    X = mixintprog(-c,A,'<',1,:Int,0,1,_SOLVER())
-
-    indices = findall(x->x!=0,round.(Int,X.sol))
     VV = vlist(G)
-    result = Set(VV[indices])
-    cache_save(G,:max_indep_set,result)
-    return result
+    EE = elist(G)
+    n = NV(G)
+    m = NE(G)
+
+    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    @variable(MOD, x[VV],Bin)
+    for e in EE
+        u,v = e
+        @constraint(MOD,x[u]+x[v]<=1)
+    end
+    @objective(MOD,Max,sum(x[v] for v in VV))
+    optimize!(MOD)
+
+    X = value.(x)
+    A = Set([v for v in VV if X[v]>0.1])
+
+    cache_save(G,:max_indep_set, A)
+    return A
 end
 
 """
@@ -98,7 +85,7 @@ such that at least `k` edges are indicent with a vertex in `S`.
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
 
 function min_vertex_cover(G::SimpleGraph, k::Int)
-    MOD = Model(with_optimizer(my_solver.Optimizer;_OPTS...))
+    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
     Vs = vlist(G)
     Es = elist(G)
 
@@ -128,9 +115,6 @@ function min_vertex_cover(G::SimpleGraph, k::Int)
     return A
 end
 
-
-
-
 """
 `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
 """
@@ -150,23 +134,29 @@ function max_matching(G::SimpleGraph)
     if cache_check(G,:max_matching)
       return cache_recall(G,:max_matching)
     end
-    m = NE(G)
-    if m == 0
-      T = vertex_type(G)
-      S = Tuple{T,T}
-      return Set{S}()
-    end
-    A = incidence(G,false)
-    c = ones(m)
-
-    X = mixintprog(-c,A,'<',1,:Int,0,1,_SOLVER())
-
-    indices = findall(x->x!=0,round.(Int,X.sol))
+    VV = vlist(G)
     EE = elist(G)
-    result = Set(EE[indices])
-    cache_save(G,:max_matching,result)
-    return result
+    n = NV(G)
+    m = NE(G)
+
+    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    @variable(MOD, x[EE], Bin)
+
+    for v in VV
+        star = [e for e in EE if e[1]==v || e[2]==v]
+        @constraint(MOD, sum(x[e] for e in star) <= 1)
+    end
+
+    @objective(MOD, Max, sum(x[e] for e in EE))
+
+    optimize!(MOD)
+    X = value.(x)
+    M = Set([e for e in EE if X[e]>0.1])
+
+    cache_save(G,:max_matching,M)
+    return M
 end
+
 
 """
 `min_edge_cover(G)` finds a smallest subset `F` of the edges such that
@@ -187,17 +177,28 @@ function min_edge_cover(G::SimpleGraph)
     if minimum(deg(G))==0
         error("Graph has an isolated vertex; no minimum edge cover exists.")
     end
-    m = NE(G)
-    M = incidence(G,false)
-    c = ones(m)
 
-    X = mixintprog(c,M,'>',1,:Int,0,1,_SOLVER())
-
-    indices = findall(x->x!=0,round.(Int,X.sol))
+    VV = vlist(G)
     EE = elist(G)
-    result = Set(EE[indices])
-    cache_save(G,:min_edge_cover,result)
-    return result
+    n = NV(G)
+    m = NE(G)
+
+    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    @variable(MOD, x[EE], Bin)
+
+    for v in VV
+        star = [e for e in EE if e[1]==v || e[2]==v]
+        @constraint(MOD, sum(x[e] for e in star) >= 1)
+    end
+
+    @objective(MOD, Min, sum(x[e] for e in EE))
+
+    optimize!(MOD)
+    X = value.(x)
+    A = Set([e for e in EE if X[e]>0.1])
+
+    cache_save(G,:min_edge_cover,A)
+    return A
 end
 
 """
@@ -216,21 +217,26 @@ function min_dom_set(G::SimpleGraph)
       return Set{T}()
     end
 
-    # A = adjacency(G)+eye(Int,n)
-
-    A = adjacency(G)
-    for j=1:n
-        A[j,j] = 1
-    end
-    c = ones(n)
-
-    X = mixintprog(c,A,'>',1,:Int,0,1,_SOLVER())
-
-    indices = findall(x->x!=0,round.(Int,X.sol))
     VV = vlist(G)
-    result = Set(VV[indices])
-    cache_save(G,:min_dom_set,result)
-    return result
+
+    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    @variable(MOD, x[VV], Bin)
+
+    for v in VV
+        Nv = G[v]
+        append!(Nv,v)
+        @constraint(MOD, sum(x[w] for w in Nv) >= 1)
+    end
+
+    @objective(MOD, Min, sum(x[v] for v in VV))
+    optimize!(MOD)
+
+    X = value.(x)
+
+    S = Set(v for v in VV if X[v]>0.1)
+
+    cache_save(G,:min_dom_set,S)
+    return S
 end
 
 include("iso.jl")
