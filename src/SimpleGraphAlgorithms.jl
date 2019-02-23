@@ -1,8 +1,7 @@
 module SimpleGraphAlgorithms
 using SimpleGraphs
-# using MathProgBase
 using JuMP
-using Cbc, Gurobi
+using Cbc
 
 _SOLVER = Cbc       # this is used by JuMP
 _OPTS = Dict()        # to pass options to JuMP optimizers
@@ -24,11 +23,11 @@ function use_Cbc(verbose::Bool=false)
 end
 
 """
-`use_Gurobi(verbose=false)` sets the optimization software
+`use_Gurobi(Gurobi,verbose=false)` sets the optimization software
 to be the `Gurobi` solver.
 """
-function use_Gurobi(verbose::Bool=false)
-    global _SOLVER = Gurobi
+function use_Gurobi(mod_name::Module,verbose::Bool=false)
+    global _SOLVER = mod_name
     if verbose
         global _OPTS = Dict(:OutputFlag=>1)
     else

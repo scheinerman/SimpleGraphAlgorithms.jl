@@ -6,8 +6,6 @@
 [![codecov.io](http://codecov.io/github/scheinerman/SimpleGraphAlgorithms.jl/coverage.svg?branch=master)](http://codecov.io/github/scheinerman/SimpleGraphAlgorithms.jl?branch=master)
 
 
-
-
 This module provides additional functions for the `SimpleGraphs`
 module that rely on integer programming. In addition to requiring the
 `SimpleGraphs` module, it also requires `JuMP` and `MathProgBase`
@@ -173,14 +171,18 @@ julia> iso_matrix(G,H)
 
 ## Setting Solver and its Options
 
-By default, the `Cbc` solver is used for integer programming. However, the
-`Gurobi` solver is supported as well. The functions `use_Cbc()` and `use_Gurobi()`
-set which optimizer to use.
+By default, the `Cbc` solver is used for integer programming.
+The function `use_Cbc()` sets the solver to be the `Cbc` solver.
+Called as `use_Cbc(true)` causes the solver to be verbose in
+it working.
 
-In addition, an optional argument can be passed to turn on verbose reporting,
-e.g., `use_Cbc(true)`. (The default is `false`.)
+The `Gurobi` solver may used instead. Since this module is not
+dependent on `Gurobi` switching to it is a bit different. Do this:
+```
+julia> using Gurobi
+julia> use_Gurobi(Gurobi)
+```
+Alternatively, `use_Gurobi(Gurobi,true)` for extensive output as the
+solver does its work.
 
-## To Do
-
-I plan to reimplement various functions purely in `JuMP` and not use calls to
-the `mixintprog` function from `MathProgBase`.
+To switch back to the `Cbc` solver, do `use_Cbc()`.
