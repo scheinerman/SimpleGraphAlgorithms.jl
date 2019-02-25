@@ -176,7 +176,7 @@ and the optimizer does no output.
 
 The function `use_Cbc()` sets the solver to be the `Cbc` solver.
 Called as `use_Cbc(true)` causes the solver to be verbose in
-it working.
+its working.
 
 The `Gurobi` solver may used instead. Since this module is not
 dependent on `Gurobi`, do this:
