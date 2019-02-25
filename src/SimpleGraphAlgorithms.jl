@@ -6,36 +6,60 @@ using Cbc
 _SOLVER = Cbc       # this is used by JuMP
 _OPTS = Dict()        # to pass options to JuMP optimizers
 
-export use_Cbc, use_Gurobi
+export use_Cbc, use_Gurobi, use_optimizer
+
+
+"""
+`use_optimizer(choice::Module, options::Dict)` chooses the
+optimization package and package options to be used by functions
+in `SimpleGraphAlgorithms` (and `SimplePosetAlgorithms`).
+
+See `use_Cbc` and `use_Gurobi`.
+"""
+function use_optimizer(choice::Module, options::Dict = Dict())
+    global _SOLVER = choice
+    global _OPTS = deepcopy(options)
+
+    nothing
+end
+
+"""
+`use_Gurobi(verbose=false)` sets the optimization software
+to be the `Gurobi` solver. Requires the user to invoke
+`using Gurobi` first.
+
+See also `use_Cbc`.
+"""
+function use_Gurobi(verbose::Bool=false)
+    opts = Dict()
+    if verbose
+        opts[:OutputFlag] = 1
+    else
+        opts[:OutputFlag] = 0
+    end
+    use_optimizer(Main.Gurobi, opts)
+    nothing
+end
 
 """
 `use_Cbc(verbose=false)` sets the optimization software
-to be the `Cbc` solver.
+to be the `Cbc` solver. This is set by default when `SimpleGraphAlgorithms`
+is loaded.
+
+See also `use_Gurobi`.
 """
 function use_Cbc(verbose::Bool=false)
-    global _SOLVER = Cbc
+    opts = Dict()
     if verbose
-        global _OPTS = Dict(:logLevel=>1)
+        global opts = Dict(:logLevel=>1)
     else
-        global _OPTS = Dict(:logLevel=>0)
+        global opts = Dict(:logLevel=>0)
     end
+    use_optimizer(Cbc, opts)
     nothing
 end
 
-"""
-`use_Gurobi(Gurobi,verbose=false)` sets the optimization software
-to be the `Gurobi` solver.
-"""
-function use_Gurobi(mod_name::Module,verbose::Bool=false)
-    global _SOLVER = mod_name
-    if verbose
-        global _OPTS = Dict(:OutputFlag=>1)
-    else
-        global _OPTS = Dict(:OutputFlag=>0)
-    end
-    nothing
-end
-
+# Use Cbc in nonverbose mode until told otherwise
 use_Cbc()
 
 

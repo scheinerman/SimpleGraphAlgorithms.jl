@@ -97,7 +97,7 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 julia> using SimpleGraphs; using SimpleGraphAlgorithms
 
 julia> G = Paley(17)
-SimpleGraphs.SimpleGraph{Int64} (17 vertices)
+Paley(17) graph (n=17, m=68)
 
 julia> max_indep_set(G)
 Set([7,4,1])
@@ -137,10 +137,10 @@ the complement of the line graph of K(5).
 
 ```julia
 julia> G = Kneser(5,2)
-SimpleGraphs.SimpleGraph{Set{Int64}} (10 vertices)
+Kneser(10,2) graph (n=10, m=15)
 
 julia> H = complement(line_graph(Complete(5)))
-SimpleGraphs.SimpleGraph{Tuple{Int64,Int64}} (10 vertices)
+SimpleGraph{Tuple{Int64,Int64}} (n=10, m=15)
 
 julia> iso(G,H)
 Dict{Set{Int64},Tuple{Int64,Int64}} with 10 entries:
@@ -171,18 +171,20 @@ julia> iso_matrix(G,H)
 
 ## Setting Solver and its Options
 
-By default, the `Cbc` solver is used for integer programming.
+By default, the `Cbc` solver is used for integer programming
+and the optimizer does no output.
+
 The function `use_Cbc()` sets the solver to be the `Cbc` solver.
 Called as `use_Cbc(true)` causes the solver to be verbose in
 it working.
 
 The `Gurobi` solver may used instead. Since this module is not
-dependent on `Gurobi` switching to it is a bit different. Do this:
+dependent on `Gurobi`, do this:
 ```
 julia> using Gurobi
-julia> use_Gurobi(Gurobi)
+julia> use_Gurobi()
 ```
-Alternatively, `use_Gurobi(Gurobi,true)` for extensive output as the
+Alternatively, `use_Gurobi(true)` for extensive output as the
 solver does its work.
 
 To switch back to the `Cbc` solver, do `use_Cbc()`.
