@@ -387,13 +387,11 @@ function uhash(G::SimpleGraph)
     if cache_check(G,:uhash)
       return cache_recall(G,:uhash)
     end
+
     v1 = sort(collect(values(info_map(G))))
 
     P  = char_poly(G)
     v2 = Int.(coeffs(P))
-    
-    # P = char_poly(G,laplace)
-    # v3 = Int.(coeffs(P))
 
     vv = [v1;v2]
     x = hash(vv)
