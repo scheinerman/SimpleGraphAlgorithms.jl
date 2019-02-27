@@ -378,6 +378,22 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
 end
 
 using LinearAlgebra
+
+
+function matrix_moments(A, max_exp::Int = 10)
+    result = zeros(Int, max_exp)
+    B = copy(A)
+
+    for t=1:max_exp
+        B = A*B
+        result[t] = tr(B)
+    end
+    return result
+end
+
+
+
+
 """
 `uhash(G)` creates an `UInt64` hash of the graph such that isomorphic
 graphs will produce the same value. We hope that nonisomorphic graphs
@@ -393,13 +409,12 @@ function uhash(G::SimpleGraph)
     A = adjacency(G)
     B = deepcopy(A)
     depth = min(10,NV(G))
-    tracer = zeros(Int,depth)
-    for k=1:depth
-        B = B*A
-        tracer[k] = tr(B)
-    end
 
-    vv = [v1; tracer]
+    v2 = matrix_moments(adjacency(G))
+    v3 = matrix_moments(laplace(G))
+
+
+    vv = [v1; v2; v3]
 
 
     x = hash(vv)
