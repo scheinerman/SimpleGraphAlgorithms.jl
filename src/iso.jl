@@ -377,7 +377,7 @@ function iso2(G::SimpleGraph, H::SimpleGraph)
     return result
 end
 
-
+using LinearAlgebra
 """
 `uhash(G)` creates an `UInt64` hash of the graph such that isomorphic
 graphs will produce the same value. We hope that nonisomorphic graphs
@@ -388,7 +388,19 @@ function uhash(G::SimpleGraph)
       return cache_recall(G,:uhash)
     end
 
-    vv = sort(collect(values(info_map(G))))
+    v1 = sort(collect(values(info_map(G))))
+
+    A = adjacency(G)
+    B = deepcopy(A)
+    depth = min(10,NV(G))
+    tracer = zeros(Int,depth)
+    for k=1:depth
+        B = B*A
+        tracer[k] = tr(B)
+    end
+
+    vv = [v1; tracer]
+
 
     x = hash(vv)
     cache_save(G,:uhash,x)
