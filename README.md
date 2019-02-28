@@ -26,6 +26,11 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 * `max_matching(G)` returns a maximum size matching of a
   `SimpleGraph`.
 
+* `kfactor(G,k)` returns a `k`-factor of `G`. This is a set of edges
+  with the property that every vertex of `G` is incident with exactly `k`
+  edges of the set. An error is thrown if no such set exists.
+  (When `k==1` this returns a perfect matching.)
+
 * `min_dom_set(G)` returns a smallest dominating set of a
   `SimpleGraph`. That is, a smallest set `S` with the property that
   every vertex of `G` either is in `S` or is adjacent to a vertex of

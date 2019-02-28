@@ -19,6 +19,10 @@ f = iso2(G,G')
 M = max_matching(G)
 @test length(M) == 8
 
+H = Dodecahedron()
+X = kfactor(H,3)
+@test length(X) == 30
+
 # Vertex coloring
 f = color(G,6)
 @test length(f) == 17
