@@ -1,4 +1,4 @@
-export iso, iso_matrix, is_iso, iso2, info_map, uhash, degdeg, fast_iso_test
+export iso, iso_matrix, is_iso, info_map, uhash, degdeg, fast_iso_test
 
 
 const iso_err_msg = "The graphs are not isomorphic"
@@ -48,64 +48,11 @@ end
 the graphs are not isomorphic). Returns a dictionary mapping the
 vertices of `G` to `H`.
 """
-function iso(G::SimpleGraph, H::SimpleGraph)
-
-    # quickly rule out some easily detected nonisomorphic graphs
-    if NV(G) != NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
-        error(iso_err_msg)
-    end
-
-    VG = vlist(G)
-    VH = vlist(H)
-    n = NV(G)
-
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
-
-    @variable(MOD, x[VG,VH],Bin)
-
-    for v in VG
-        @constraint(MOD, sum(x[v,VH[k]] for k=1:n)==1)
-    end
-
-    for w in VH
-        @constraint(MOD, sum(x[VG[k],w] for k=1:n)==1)
-    end
-
-    for v in VG
-        for w in VH
-            @constraint(MOD,
-                           sum( has(G,v,VG[k])*x[VG[k],w] for k=1:n ) ==
-                           sum( x[v,VH[k]]*has(H,VH[k],w) for k=1:n )
-                           )
-        end
-    end
-
-    optimize!(MOD)
-    status = Int(termination_status(MOD))
-
-    if status != 1
-        error(iso_err_msg)
-    end
-
-    X = value.(x)
-
-    result = Dict{vertex_type(G), vertex_type(H)}()
-
-    for v in VG
-        for w in VH
-            if X[v,w] > 0
-                result[v] = w
-            end
-        end
-    end
-    return result
-end
-
 
 """
 `is_iso(G,H,d)` checks if `d` is an isomorphism from `G` to `H`.
 """
-function is_iso(G::SimpleGraph, H::SimpleGraph, d::Dict)
+function is_iso(G::SimpleGraph, H::SimpleGraph, d::Dict)::Bool
     n = NV(G)
 
     # standard quick check
@@ -160,7 +107,7 @@ degree sequences. Returns `false` if the graphs fail this very basic
 test of isomorphism. A `true` result does *not* imply the graphs are
 isomorphic.
 """
-function fast_iso_test_basic(G::SimpleGraph, H::SimpleGraph)
+function fast_iso_test_basic(G::SimpleGraph, H::SimpleGraph)::Bool
     if NV(G)!=NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
         return false
     end
@@ -173,15 +120,8 @@ the graphs *might* be isomorphic. A `false` return certifies the
 graphs are **not** isomorphic; a `true` result indicates the
 graphs might be (indeed, likely are) isomorphic.
 """
-function fast_iso_test(G::SimpleGraph, H::SimpleGraph)
-    if !fast_iso_test_basic(G,H)
-        return false
-    end
-    f = info_map(G)
-    g = info_map(H)
-    fv = sort(collect(values(f)))
-    gv = sort(collect(values(g)))
-    return fv == gv
+function fast_iso_test(G::SimpleGraph, H::SimpleGraph)::Bool
+    return fast_iso_test_basic(G,H) && uhash(G) == uhash(H)
 end
 
 """
@@ -278,14 +218,14 @@ end
 
 
 """
-`iso2(G,H)` is a variant of `iso(G,H)` that first applies various
-heuristics that should speed up processing if the graphs are "far"
-from vertex transitive.
+`iso(G,H)` finds an isomorphism from `G` to `H` (or throws an error if
+the graphs are not isomorphic). Returns a dictionary mapping the
+vertices of `G` to `H`.
 """
-function iso2(G::SimpleGraph, H::SimpleGraph)
+function iso(G::SimpleGraph, H::SimpleGraph)
 
     # quickly rule out some easily detected nonisomorphic graphs
-    if !fast_iso_test(G,H)
+    if !fast_iso_test(G,H) || uhash(G) != uhash(H)
         error(iso_err_msg)
     end
 

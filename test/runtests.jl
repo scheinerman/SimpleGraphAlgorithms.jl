@@ -11,8 +11,6 @@ B = max_indep_set(G)
 # Isomorphism
 f = iso(G,G')
 @test length(f) == 17
-f = iso2(G,G')
-@test length(f) == 17
 @test is_iso(G,G')
 
 # Edge matching
@@ -60,7 +58,5 @@ add!(G,4,0)
 H = Spindle()
 add!(H,7,0)
 @test fast_iso_test(G,H)
-f = iso2(G,H)
+f = iso(G,H)
 @test f[0] == 0
-g = iso(G,H)
-@test g[0] == 0

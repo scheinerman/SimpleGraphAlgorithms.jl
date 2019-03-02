@@ -68,9 +68,8 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::Poly{Int})
 
     # Recall those graphs with matching uhash
     for (H,Q) in CPM.D[index]
-        try iso2(G,H)  # if isomorphic, nothing to add
+        if is_iso(G,H) # if isomorphic, nothing to add
             return
-        catch
         end
     end
 
@@ -92,9 +91,8 @@ function recall(CPM::ChromePolyMemo, G::SimpleGraph)
     SG = CPM.D[ds]  # This may throw an error if not found. That's good.
 
     for (H,Q) in SG
-        try iso2(G,H) # we found a copy of this graph!
+        if is_iso(G,H)
             return Q
-        catch
         end
     end
 
