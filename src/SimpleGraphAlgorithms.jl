@@ -268,6 +268,6 @@ include("chrome_poly.jl")
 include("edge-coloring.jl")
 include("mad.jl")
 include("kfactor.jl")
-
+include("connectivity.jl")
 
 end # of module SimpleGraphAlgorithms
