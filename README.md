@@ -18,6 +18,8 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 ## Functions
 
+#### Cliques and independent sets
+
 * `max_indep_set(G)` returns a maximum size independent set of a
   `SimpleGraph`.
 
@@ -30,6 +32,8 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
   with the property that every vertex of `G` is incident with exactly `k`
   edges of the set. An error is thrown if no such set exists.
   (When `k==1` this returns a perfect matching.)
+
+#### Covering and domination
 
 * `min_dom_set(G)` returns a smallest dominating set of a
   `SimpleGraph`. That is, a smallest set `S` with the property that
@@ -44,6 +48,9 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
   a set of edges `F` such that every vertex of `G` is the end point
   of at least one edge in `F`. **Note**: If `G` has an isolated
   vertex, then no edge cover is possible and error is generated.
+
+
+#### Isomorphism
 
 * `iso(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
@@ -70,6 +77,8 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 * `uhash(G)` creates a hash value for the graph `G` with the property
    that isomorphic graphs have the same hash value.
 
+#### Coloring
+
 * `color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
 
@@ -82,6 +91,17 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 * `edge_chromatic_number(G)` returns the edge chromatic number of `G`.
 
+
+#### Connectivity
+
+* `min_cut(G)` returns a minimum size (vertex) cut set. `connectivity(G)`
+returns the size of that cut set.
+
+* `min_edge_cut(G)` returns a minimum size edge cut set. `edge_connectivity(G)`
+returns the size of that edge cut set.
+
+
+#### Maximum average degree
 
 * `ad(G)` returns the average degree of `G`.
 

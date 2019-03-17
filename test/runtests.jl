@@ -62,8 +62,9 @@ f = iso(G,H)
 @test f[0] == 0
 
 
-# edge edge_connectivity
+# edge and vertex connectivity
 G = Complete(8,8)'
 add!(G,1,9)
-add!(G,2,10)
+add!(G,1,10)
 @test edge_connectivity(G) == 2
+@test connectivity(G)==1

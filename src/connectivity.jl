@@ -1,4 +1,75 @@
 export edge_connectivity, min_edge_cut
+export connectivity, min_cut
+
+"""
+`min_cut(G)` returns a minimum size set of vertices that
+disconnects `G`.
+"""
+function min_cut(G::SimpleGraph{T})::Set{T} where T
+    n = NV(G)
+    m = NE(G)
+    n*(n-1)!=2m || error("Graph must not be complete")
+
+    if cache_check(G,:min_cut)
+        return cache_recall(G,:min_cut)
+    end
+
+    if !is_connected(G)
+        X = Set{T}()
+        cache_save(G,:min_cut,X)
+        return X
+    end
+
+    VV = vlist(G)
+    EE = elist(G)
+
+    MOD = Model(with_optimizer(_SOLVER.Optimizer; _OPTS...))
+    @variable(MOD,a[VV],Bin)  # in part 1
+    @variable(MOD,b[VV],Bin)  # in part 2
+    @variable(MOD,c[VV],Bin)  # in cut set
+
+    for v in VV
+        @constraint(MOD, a[v]+b[v]+c[v]==1)
+    end
+
+    @constraint(MOD, sum(a[v] for v in VV)>=1)
+    @constraint(MOD, sum(b[v] for v in VV)>=1)
+
+    for e in EE
+        v,w = e
+        @constraint(MOD,a[v]+b[w]<=1)
+        @constraint(MOD,a[w]+b[v]<=1)
+    end
+
+    @objective(MOD, Min, sum(c[v] for v in VV))
+
+    optimize!(MOD)
+    status = Int(termination_status(MOD))
+
+    C =  value.(c)
+
+    X = Set(v for v in VV if C[v] > 0.5)
+    cache_save(G,:min_cut,X)
+    return X
+end
+
+
+"""
+`connectivity(G)` returns the (vertex) connectivity of `G`, i.e.,
+the minimum size of a vertex cut set. If `G` is a complete graph with
+`n` vertices, the connectivity is `n-1` (or `0` for the empty graph).
+"""
+function connectivity(G::SimpleGraph)::Int
+    n = NV(G)
+    m = NE(G)
+    if n*(n-1) == 2m   # graph is complete
+        return max(n-1,0)  # what is the connectivity of K_0?
+    end
+
+    return length(min_cut(G))
+end
+
+
 
 """
 `min_edge_cut(G)` returns a minimum size set of edges whose removal
@@ -55,7 +126,7 @@ end
 """
 `edge_connectivity(G)` returns the size of a minimum edge cut of `G`.
 """
-edge_connectivity(G::SimpleGraph) = length(min_edge_cut(G))
+edge_connectivity(G::SimpleGraph)::Int = length(min_edge_cut(G))
 
 """
 `edge_connectivity(G,s,t)` determines the minimum size of an edge cut
