@@ -60,3 +60,10 @@ add!(H,7,0)
 @test fast_iso_test(G,H)
 f = iso(G,H)
 @test f[0] == 0
+
+
+# edge edge_connectivity
+G = Complete(8,8)'
+add!(G,1,9)
+add!(G,2,10)
+@test edge_connectivity(G) == 2

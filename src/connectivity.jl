@@ -1,8 +1,61 @@
-# This will house vertex and edge connectivity functions.
-# WARNING: These implementations are TERRIBLE. This is just to get something
-# going.
+export edge_connectivity, min_edge_cut
 
-export edge_connectivity
+"""
+`min_edge_cut(G)` returns a minimum size set of edges whose removal
+disconnects `G`. The graph must have at least two vertices.
+"""
+function min_edge_cut(G::SimpleGraph{T})::Set{Tuple{T,T}} where T
+    n = NV(G)
+    n > 1 || error("Graph must have at least two vertices")
+
+    if cache_check(G,:min_edge_cut)
+        return cache_recall(G,:min_edge_cut)
+    end
+
+    if !is_connected(G)
+        X = Set{Tuple{T,T}}()
+        cache_save(G,:min_edge_cut,X)
+        return X
+    end
+
+    VV = vlist(G)
+    EE = elist(G)
+
+    MOD = Model(with_optimizer(_SOLVER.Optimizer; _OPTS...))
+
+    @variable(MOD,a[VV],Bin)  # in part 1
+    @variable(MOD,b[VV],Bin)  # in part 2
+    @variable(MOD,c[EE],Bin)  # span between the parts
+
+    for v in VV
+        @constraint(MOD,a[v]+b[v]==1)
+    end
+
+    @constraint(MOD,sum(a[v] for v in VV) >= 1)
+    @constraint(MOD,sum(b[v] for v in VV) >= 1)
+
+    for e in EE
+        u,v = e
+        @constraint(MOD,a[u]+b[v]-1 <= c[e])
+        @constraint(MOD,a[v]+b[u]-1 <= c[e])
+    end
+
+    @objective(MOD, Min, sum(c[e] for e in EE))
+
+    optimize!(MOD)
+    status = Int(termination_status(MOD))
+
+    C =  value.(c)
+
+    X = Set(e for e in EE if C[e] > 0.5)
+    cache_save(G,:min_edge_cut,X)
+    return X
+end
+
+"""
+`edge_connectivity(G)` returns the size of a minimum edge cut of `G`.
+"""
+edge_connectivity(G::SimpleGraph) = length(min_edge_cut(G))
 
 """
 `edge_connectivity(G,s,t)` determines the minimum size of an edge cut
