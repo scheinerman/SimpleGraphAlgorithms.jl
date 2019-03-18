@@ -94,11 +94,17 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 #### Connectivity
 
-* `min_cut(G)` returns a minimum size (vertex) cut set. `connectivity(G)`
-returns the size of that cut set.
+* `min_cut(G)` returns a minimum size (vertex) cut set. `min_cut(G,s,t)`
+return a smallest set of vertices that separate `s` and `t`.
 
-* `min_edge_cut(G)` returns a minimum size edge cut set. `edge_connectivity(G)`
-returns the size of that edge cut set.
+* `connectivity(G)` or `connectivity(G,s,t)` returns the size of such a cut set.
+
+* `min_edge_cut(G)` returns a minimum size edge cut set.
+`min_edge_cut(G,s,t)` returns a minimum set of edges that separate vertices
+`s` and `t`.
+
+* `edge_connectivity(G)` or `edge_connectivity(G,s,t)` returns the size of
+such an edge cut set.
 
 
 #### Maximum average degree
