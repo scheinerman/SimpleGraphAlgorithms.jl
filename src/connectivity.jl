@@ -1,23 +1,36 @@
 export edge_connectivity, min_edge_cut
 export connectivity, min_cut
 
+
+# min_cut(G,s,t) -- min cut separating s and t
+# min_cut(G) -- min cut separating the graph
+# flag == true means we want s/t cut
+
 """
-`min_cut(G)` returns a minimum size set of vertices that
-disconnects `G`.
+`min_cut(G)` returns a minimum size set of vertices that disconnects `G`. 
+
+`min_cut(G,s,t)` returns a minimum size cut that separates `s` and `t`.
 """
-function min_cut(G::SimpleGraph{T})::Set{T} where T
+function min_cut(G::SimpleGraph{T},s::T, t::T,flag::Bool=true)::Set{T} where T
     n = NV(G)
     m = NE(G)
     n*(n-1)!=2m || error("Graph must not be complete")
 
-    if cache_check(G,:min_cut)
-        return cache_recall(G,:min_cut)
-    end
+    if flag
+        has(G,s)    || error("$s is not a vertex of this graph")
+        has(G,t)    || error("$t is not a vertex of this graph")
+        s!=t        || error("two vertices must be different")
+        !has(G,s,t) || error("vertices $s and $t cannot be adjacent")
+    else
+        if cache_check(G,:min_cut)
+            return cache_recall(G,:min_cut)
+        end
 
-    if !is_connected(G)
-        X = Set{T}()
-        cache_save(G,:min_cut,X)
-        return X
+        if !is_connected(G)
+            X = Set{T}()
+            cache_save(G,:min_cut,X)
+            return X
+        end
     end
 
     VV = vlist(G)
@@ -30,6 +43,11 @@ function min_cut(G::SimpleGraph{T})::Set{T} where T
 
     for v in VV
         @constraint(MOD, a[v]+b[v]+c[v]==1)
+    end
+
+    if flag
+        @constraint(MOD,a[s]==1)
+        @constraint(MOD,b[t]==1)
     end
 
     @constraint(MOD, sum(a[v] for v in VV)>=1)
@@ -47,12 +65,20 @@ function min_cut(G::SimpleGraph{T})::Set{T} where T
     status = Int(termination_status(MOD))
 
     C =  value.(c)
-
     X = Set(v for v in VV if C[v] > 0.5)
-    cache_save(G,:min_cut,X)
+
+    if !flag
+        cache_save(G,:min_cut,X)
+    end
     return X
 end
 
+function min_cut(G::SimpleGraph)::Set
+    n = NV(G)
+    n>1 || error("Graph must have at least two vertices")
+    s = first(G.V)
+    return min_cut(G,s,s,false)
+end
 
 """
 `connectivity(G)` returns the (vertex) connectivity of `G`, i.e.,
