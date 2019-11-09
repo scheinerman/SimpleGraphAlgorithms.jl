@@ -4,3 +4,4 @@ SimplePartitions
 JuMP
 Polynomials
 Cbc
+ChooseOptimizer

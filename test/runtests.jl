@@ -1,6 +1,7 @@
 using Test
 using SimpleGraphs, SimpleGraphAlgorithms, Polynomials
 
+use_Cbc()
 G = Paley(17)
 
 # Cliques and independent sets

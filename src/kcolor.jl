@@ -41,7 +41,7 @@ function color(G::SimpleGraph, k::Int)
         return two_color(G)
     end
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
 
     @variable(MOD, x[VV,1:k], Bin)
 

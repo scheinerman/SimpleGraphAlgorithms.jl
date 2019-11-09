@@ -17,7 +17,8 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
         error(iso_err_msg)
     end
 
-    m = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    m = Model(get_solver())
+    
     @variable(m,P[1:n,1:n],Bin)
     A = adjacency(G)
     B = adjacency(H)
@@ -263,7 +264,7 @@ function iso(G::SimpleGraph, H::SimpleGraph)
         push!(xH[x],v)
     end
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
 
     @variable(MOD, x[VG,VH],Bin)
 

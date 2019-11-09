@@ -1,9 +1,5 @@
 # SimpleGraphAlgorithms
 
-[![Build Status](https://travis-ci.org/scheinerman/SimpleGraphAlgorithms.jl.svg?branch=master)](https://travis-ci.org/scheinerman/SimpleGraphAlgorithms.jl)
-
-
-[![codecov.io](http://codecov.io/github/scheinerman/SimpleGraphAlgorithms.jl/coverage.svg?branch=master)](http://codecov.io/github/scheinerman/SimpleGraphAlgorithms.jl?branch=master)
 
 
 This module provides additional functions for the `SimpleGraphs`
@@ -212,3 +208,5 @@ Alternatively, `use_Gurobi(true)` for extensive output as the
 solver does its work.
 
 To switch back to the `Cbc` solver, do `use_Cbc()`.
+
+These functions rely on my `ChooseOptimizer` module.

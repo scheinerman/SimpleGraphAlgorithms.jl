@@ -1,7 +1,7 @@
 module SimpleGraphAlgorithms
 using SimpleGraphs
 using JuMP
-using Cbc
+using Cbc, ChooseOptimizer
 
 _SOLVER = Cbc       # this is used by JuMP
 _OPTS = Dict()        # to pass options to JuMP optimizers
@@ -31,13 +31,18 @@ to be the `Gurobi` solver. Requires the user to invoke
 See also `use_Cbc`.
 """
 function use_Gurobi(verbose::Bool=false)
-    opts = Dict()
+
+    set_solver(Main.Gurobi)
+    clear_solver_options()
+
     if verbose
-        opts[:OutputFlag] = 1
+        set_solver_option(:OutputFlag,1)
+        # opts[:OutputFlag] = 1
     else
-        opts[:OutputFlag] = 0
+        set_solver_option(:OutputFlag,0)
+        # opts[:OutputFlag] = 0
     end
-    use_optimizer(Main.Gurobi, opts)
+    # use_optimizer(Main.Gurobi, opts)
     nothing
 end
 
@@ -49,13 +54,16 @@ is loaded.
 See also `use_Gurobi`.
 """
 function use_Cbc(verbose::Bool=false)
-    opts = Dict()
+    set_solver(Cbc)
+    clear_solver_options()
+
     if verbose
-        global opts = Dict(:logLevel=>1)
+        # global opts = Dict(:logLevel=>1)
+        set_solver_option(:LogLevel,1)
     else
-        global opts = Dict(:logLevel=>0)
+        # global opts = Dict(:logLevel=>0)
+        set_solver_option(:LogLevel,0)
     end
-    use_optimizer(Cbc, opts)
     nothing
 end
 
@@ -81,7 +89,7 @@ function max_indep_set(G::SimpleGraph)
     n = NV(G)
     m = NE(G)
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
     @variable(MOD, x[VV],Bin)
     for e in EE
         u,v = e
@@ -108,7 +116,7 @@ such that at least `k` edges are indicent with a vertex in `S`.
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
 
 function min_vertex_cover(G::SimpleGraph, k::Int)
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
     Vs = vlist(G)
     Es = elist(G)
 
@@ -162,7 +170,7 @@ function max_matching(G::SimpleGraph)
     n = NV(G)
     m = NE(G)
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
     @variable(MOD, x[EE], Bin)
 
     for v in VV
@@ -206,7 +214,7 @@ function min_edge_cover(G::SimpleGraph)
     n = NV(G)
     m = NE(G)
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
     @variable(MOD, x[EE], Bin)
 
     for v in VV
@@ -242,7 +250,7 @@ function min_dom_set(G::SimpleGraph)
 
     VV = vlist(G)
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
     @variable(MOD, x[VV], Bin)
 
     for v in VV

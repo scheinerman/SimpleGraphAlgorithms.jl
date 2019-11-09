@@ -36,7 +36,8 @@ function min_cut(G::SimpleGraph{T},s::T, t::T,flag::Bool=true)::Set{T} where T
     VV = vlist(G)
     EE = elist(G)
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer; _OPTS...))
+    MOD = Model(get_solver())
+    
     @variable(MOD,a[VV],Bin)  # in part 1
     @variable(MOD,b[VV],Bin)  # in part 2
     @variable(MOD,c[VV],Bin)  # in cut set
@@ -130,7 +131,7 @@ function min_edge_cut(G::SimpleGraph{T}, s::T, t::T, flag::Bool=true)::Set{Tuple
     VV = vlist(G)
     EE = elist(G)
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer; _OPTS...))
+    MOD = Model(get_solver())
 
     @variable(MOD,a[VV],Bin)  # in part 1
     @variable(MOD,b[VV],Bin)  # in part 2

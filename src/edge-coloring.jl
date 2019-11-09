@@ -26,7 +26,7 @@ function edge_color(G::SimpleGraph, k::Int)
 
     result = Dict{ET,Int}()
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer; _OPTS...))
+    MOD = Model(get_solver())
     @variable(MOD, x[EE,1:k], Bin)
 
     # Every edge must have exactly one color

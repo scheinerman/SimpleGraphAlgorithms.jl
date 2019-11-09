@@ -2,9 +2,6 @@ using Polynomials, SimplePartitions
 import Base.length, Base.setindex!, Base.getindex
 export chrome_poly, reset_cpm, size_cpm
 
-# typealias CPM_pair Tuple{SimpleGraph,Poly{Int}}
-# typealias CPM_dict Dict{ UInt64, Vector{CPM_pair} }
-
 const CPM_pair = Tuple{SimpleGraph,Poly{Int}}
 const CPM_dict = Dict{UInt64,Vector{CPM_pair}}
 

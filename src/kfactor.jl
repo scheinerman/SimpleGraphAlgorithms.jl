@@ -13,7 +13,8 @@ function kfactor(G::SimpleGraph, k::Int = 1)
     n = NV(G)
     m = NE(G)
 
-    MOD = Model(with_optimizer(_SOLVER.Optimizer;_OPTS...))
+    MOD = Model(get_solver())
+    
     @variable(MOD, x[EE], Bin)
 
     for v in VV
