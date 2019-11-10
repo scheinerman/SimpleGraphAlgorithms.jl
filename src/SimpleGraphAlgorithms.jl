@@ -31,18 +31,8 @@ to be the `Gurobi` solver. Requires the user to invoke
 See also `use_Cbc`.
 """
 function use_Gurobi(verbose::Bool=false)
-
     set_solver(Main.Gurobi)
-    clear_solver_options()
-
-    if verbose
-        set_solver_option(:OutputFlag,1)
-        # opts[:OutputFlag] = 1
-    else
-        set_solver_option(:OutputFlag,0)
-        # opts[:OutputFlag] = 0
-    end
-    # use_optimizer(Main.Gurobi, opts)
+    set_solver_verbose(verbose)
     nothing
 end
 
@@ -55,15 +45,7 @@ See also `use_Gurobi`.
 """
 function use_Cbc(verbose::Bool=false)
     set_solver(Cbc)
-    clear_solver_options()
-
-    if verbose
-        # global opts = Dict(:logLevel=>1)
-        set_solver_option(:LogLevel,1)
-    else
-        # global opts = Dict(:logLevel=>0)
-        set_solver_option(:LogLevel,0)
-    end
+    set_solver_verbose(verbose)
     nothing
 end
 
