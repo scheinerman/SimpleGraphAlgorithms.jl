@@ -237,7 +237,7 @@ function min_dom_set(G::SimpleGraph)
 
     for v in VV
         Nv = G[v]
-        append!(Nv,v)
+        push!(Nv,v)
         @constraint(MOD, sum(x[w] for w in Nv) >= 1)
     end
 
