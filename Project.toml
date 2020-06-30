@@ -1,5 +1,6 @@
 name = "SimpleGraphAlgorithms"
 uuid = "41400c72-0c58-5c16-8579-4ecbce768449"
+version = "0.5.0"
 
 [deps]
 Cbc = "9961bab8-2fa3-5c5a-9d89-47fab24efd76"
@@ -11,7 +12,13 @@ SimpleGraphs = "55797a34-41de-5266-9ec1-32ac4eb504d3"
 SimplePartitions = "ec83eff0-a5b5-5643-ae32-5cbf6eedec9d"
 
 [compat]
-julia = "≥ 1.0.0"
+julia = "1"
+Cbc = "0"
+ChooseOptimizer = "0"
+JuMP = "0"
+Polynomials = "1"
+SimpleGraphs = "0"
+SimplePartitions = "0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
