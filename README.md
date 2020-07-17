@@ -7,7 +7,7 @@ module that rely on integer programming. In addition to requiring the
 which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 **New**: ~~Now requires the `Polynomials` module.~~ As of version 0.5.0
-now uses the `SimplePolynomials` module.M
+now uses the `SimplePolynomials` module.
 
 **Note**: Because these functions rely on solving integer linear
   programs, they can be rather slow for large graphs.
