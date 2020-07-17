@@ -1,8 +1,8 @@
-using Polynomials, SimplePartitions
+using SimplePolynomials, SimplePartitions
 import Base.length, Base.setindex!, Base.getindex
 export chrome_poly, reset_cpm, size_cpm
 
-const CPM_pair = Tuple{SimpleGraph,Polynomial{Int}}
+const CPM_pair = Tuple{SimpleGraph,SimplePolynomial}
 const CPM_dict = Dict{UInt64,Vector{CPM_pair}}
 
 # This is a device to record previously computed chromatic polynomials
@@ -50,7 +50,7 @@ this data structure (if it wasn't in there already).
 
 Short form: `CPM[G] = P`.
 """
-function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::Polynomial{Int})
+function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::SimplePolynomial)
     index::Int128 = uhash(G)  # get the signature for this graph
 
     # have we seen this graph's uhash before?
@@ -120,23 +120,26 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
 
     # Special case: no vertices
     if n==0
-        return Polynomial([1])
+        return SimplePolynomial([1])
     end
 
     # Special case: no edges
     if m==0
-        return Polynomial([zeros(Int,n);1])
+        x = getx()
+        return x^n
     end
 
     # Special case: complete graph
     if 2m == n*(n-1)
-        return fromroots(0:n-1)
+        x = getx()
+        return prod(x-k for k=0:n-1)
+        # return fromroots(0:n-1)
     end
 
     # Special case: disconnected graph
     comps = parts(components(G))
     if length(comps) > 1
-        result = Polynomial([1])
+        result = SimplePolynomial([1])
         for A in comps
             H = induce(G,A)
             result *= chrome_poly(H)
@@ -146,7 +149,7 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
 
     # Special case: Tree
     if m == n-1
-        return Polynomial([0,1]) * Polynomial([-1,1])^(n-1)
+        return SimplePolynomial([0,1]) * SimplePolynomial([-1,1])^(n-1)
     end
 
     # See if we've computed this chromatic polynomial of this graph before
@@ -171,7 +174,7 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
         GG = deepcopy(G)
         delete!(GG,u)
         p1 = chrome_poly(GG)
-        P = p1 * Polynomial([-1,1])
+        P = p1 * SimplePolynomial([-1,1])
         _CPM[G] = P
         return P
     end
