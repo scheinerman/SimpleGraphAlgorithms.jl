@@ -6,8 +6,8 @@ module that rely on integer programming. In addition to requiring the
 `SimpleGraphs` module, it also requires `JuMP` and `MathProgBase`
 which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
-**New**: ~~Now requires the `Polynomials` module.~~ As of version 0.5.0
-now uses the `SimplePolynomials` module.
+**New**: ~~Now requires the `Polynomials` module.~~ As of version 0.4.2, 
+this module uses the `SimplePolynomials` module instead of `Polynomials`.
 
 **Note**: Because these functions rely on solving integer linear
   programs, they can be rather slow for large graphs.
