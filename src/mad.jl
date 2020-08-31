@@ -67,7 +67,7 @@ function mad_core(G::SimpleGraph)
   if cache_check(G,:mad_core)
     return cache_recall(G,:mad_core)
   end
-  T = vertex_type(G)
+  T = eltype(G)
   GG = deepcopy(G)
   while true
     if NV(GG)==0

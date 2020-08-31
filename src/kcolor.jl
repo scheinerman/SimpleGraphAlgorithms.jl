@@ -25,7 +25,7 @@ function color(G::SimpleGraph, k::Int)
         end
     end
 
-    result = Dict{vertex_type(G),Int}()
+    result = Dict{eltype(G),Int}()
 
     if k==1
         if NE(G) > 0

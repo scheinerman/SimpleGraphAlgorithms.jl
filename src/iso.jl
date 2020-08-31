@@ -207,7 +207,7 @@ function info_map(G::SimpleGraph)
 
     # println(sortrows(M))  # debug
 
-    T = vertex_type(G)
+    T = eltype(G)
     d = Dict{T,Int128}()
     for k=1:n
         v = VV[k]
@@ -234,8 +234,8 @@ function iso(G::SimpleGraph, H::SimpleGraph)
     VH = vlist(H)
     n = NV(G)
 
-    TG = vertex_type(G)
-    TH = vertex_type(H)
+    TG = eltype(G)
+    TH = eltype(H)
 
     dG = info_map(G)
     dH = info_map(H)
@@ -306,7 +306,7 @@ function iso(G::SimpleGraph, H::SimpleGraph)
 
     X = value.(x)
 
-    result = Dict{vertex_type(G), vertex_type(H)}()
+    result = Dict{eltype(G), eltype(H)}()
 
     for v in VG
         for w in VH

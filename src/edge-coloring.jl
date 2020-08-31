@@ -21,7 +21,7 @@ function edge_color(G::SimpleGraph, k::Int)
     n = NV(G)
     m = NE(G)
 
-    VT = vertex_type(G)
+    VT = eltype(G)
     ET = Tuple{VT,VT}
 
     result = Dict{ET,Int}()

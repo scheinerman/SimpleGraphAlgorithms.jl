@@ -182,7 +182,7 @@ function min_edge_cover(G::SimpleGraph)
     end
 
     if NV(G) == 0
-      T = vertex_type(G)
+      T = eltype(G)
       S = Tuple{T,T}
       return Set{S}()
     end
@@ -226,7 +226,7 @@ function min_dom_set(G::SimpleGraph)
     end
     n = NV(G)
     if n==0
-      T = vertex_type(G)
+      T = eltype(G)
       return Set{T}()
     end
 
