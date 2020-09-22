@@ -13,25 +13,25 @@ error is raised.
 function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     n = NV(G)
 
-    if !fast_iso_test_basic(G,H)
+    if !fast_iso_test_basic(G, H)
         error(iso_err_msg)
     end
 
     m = Model(get_solver())
-    
-    @variable(m,P[1:n,1:n],Bin)
+
+    @variable(m, P[1:n, 1:n], Bin)
     A = adjacency(G)
     B = adjacency(H)
 
-    for i=1:n
-        for k=1:n
-            @constraint(m,
-                           sum(A[i,j]*P[j,k] for j=1:n) ==
-                           sum(P[i,j]*B[j,k] for j=1:n)
-                           )
+    for i = 1:n
+        for k = 1:n
+            @constraint(
+                m,
+                sum(A[i, j] * P[j, k] for j = 1:n) == sum(P[i, j] * B[j, k] for j = 1:n)
+            )
         end
-        @constraint(m, sum(P[i,j] for j=1:n) == 1)
-        @constraint(m, sum(P[j,i] for j=1:n) == 1)
+        @constraint(m, sum(P[i, j] for j = 1:n) == 1)
+        @constraint(m, sum(P[j, i] for j = 1:n) == 1)
     end
 
     optimize!(m)
@@ -63,13 +63,13 @@ function is_iso(G::SimpleGraph, H::SimpleGraph, d::Dict)::Bool
 
     # check keys and values in d match VG and VH, respectively
     for k in keys(d)
-        if !has(G,k)
+        if !has(G, k)
             return false
         end
     end
 
     for v in values(d)
-        if !has(H,v)
+        if !has(H, v)
             return false
         end
     end
@@ -80,7 +80,7 @@ function is_iso(G::SimpleGraph, H::SimpleGraph, d::Dict)::Bool
     for e in EE
         v = e[1]
         w = e[2]
-        if !has(H,d[v],d[w])
+        if !has(H, d[v], d[w])
             return false
         end
     end
@@ -94,7 +94,7 @@ otherwise.
 """
 function is_iso(G::SimpleGraph, H::SimpleGraph)::Bool
     try
-        f = iso(G,H)
+        f = iso(G, H)
     catch
         return false
     end
@@ -109,7 +109,7 @@ test of isomorphism. A `true` result does *not* imply the graphs are
 isomorphic.
 """
 function fast_iso_test_basic(G::SimpleGraph, H::SimpleGraph)::Bool
-    if NV(G)!=NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
+    if NV(G) != NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
         return false
     end
     return true
@@ -122,7 +122,7 @@ graphs are **not** isomorphic; a `true` result indicates the
 graphs might be (indeed, likely are) isomorphic.
 """
 function fast_iso_test(G::SimpleGraph, H::SimpleGraph)::Bool
-    return fast_iso_test_basic(G,H) && uhash(G) == uhash(H)
+    return fast_iso_test_basic(G, H) && uhash(G) == uhash(H)
 end
 
 """
@@ -131,24 +131,24 @@ row are the degrees of the neighbors of that vertex. The rows are
 lexicographically sorted.
 """
 function degdeg(G::SimpleGraph)
-    if cache_check(G,:degdeg)
-      return cache_recall(G,:degdeg)
+    if cache_check(G, :degdeg)
+        return cache_recall(G, :degdeg)
     end
 
     n = NV(G)
-    result = zeros(Int,n,n)
+    result = zeros(Int, n, n)
     VV = vlist(G)
 
-    for k=1:n
+    for k = 1:n
         v = VV[k]
-        dv = [ deg(G,w) for w in G[v] ]
+        dv = [deg(G, w) for w in G[v]]
         dv = sort(dv)
-        dv = [ dv; zeros(Int,n-deg(G,v)) ]
-        result[k,:] = dv
+        dv = [dv; zeros(Int, n - deg(G, v))]
+        result[k, :] = dv
     end
 
-    result = sortslices(result,dims=1)
-    cache_save(G,:degdeg,result)
+    result = sortslices(result, dims = 1)
+    cache_save(G, :degdeg, result)
     return result
 end
 
@@ -162,45 +162,45 @@ we mean a pair of vertices such that there is an automorphism of the
 graph mapping one to the other.)
 """
 function info_map(G::SimpleGraph)
-    if cache_check(G,:info_map)
-      return cache_recall(G,:info_map)
+    if cache_check(G, :info_map)
+        return cache_recall(G, :info_map)
     end
     n = NV(G)
     VV = vlist(G)
     H = G'
 
     # Section 1: Neighborhood degrees
-    M1 = zeros(Int,n,n-1)
-    for k=1:n
+    M1 = zeros(Int, n, n - 1)
+    for k = 1:n
         v = VV[k]
-        rv = [ deg(G,w) for w in G[v] ]
-        rv = [ sort(rv) ; zeros(Int,n-1-deg(G,v)) ]
-        M1[k,:] = rv
+        rv = [deg(G, w) for w in G[v]]
+        rv = [sort(rv); zeros(Int, n - 1 - deg(G, v))]
+        M1[k, :] = rv
     end
 
     # Section 2: Complement degrees
-    M2 = zeros(Int,n,n-1)
-    for k=1:n
+    M2 = zeros(Int, n, n - 1)
+    for k = 1:n
         v = VV[k]
-        rv = [ deg(H,w) for w in H[v] ]
-        rv = [ sort(rv) ; zeros(Int,n-1-deg(H,v)) ]
-        M2[k,:] = rv
+        rv = [deg(H, w) for w in H[v]]
+        rv = [sort(rv); zeros(Int, n - 1 - deg(H, v))]
+        M2[k, :] = rv
     end
 
     # Section 3: Distances
-    M3 = zeros(Int,n,n-1)
-    for k=1:n
+    M3 = zeros(Int, n, n - 1)
+    for k = 1:n
         v = VV[k]
-        dv = dist(G,v)
-        M3[k,:] = sort(collect(values(dv)))[1:n-1]
+        dv = dist(G, v)
+        M3[k, :] = sort(collect(values(dv)))[1:n-1]
     end
 
     # Section 4: Distances in complement
-    M4 = zeros(Int,n,n-1)
-    for k=1:n
+    M4 = zeros(Int, n, n - 1)
+    for k = 1:n
         v = VV[k]
-        dv = dist(H,v)
-        M4[k,:] = sort(collect(values(dv)))[1:n-1]
+        dv = dist(H, v)
+        M4[k, :] = sort(collect(values(dv)))[1:n-1]
     end
 
     M = [M1 M2 M3 M4]
@@ -209,11 +209,11 @@ function info_map(G::SimpleGraph)
 
     T = eltype(G)
     d = Dict{T,Int128}()
-    for k=1:n
+    for k = 1:n
         v = VV[k]
-        d[v] = Int128(hash(M[k,:]))
+        d[v] = Int128(hash(M[k, :]))
     end
-    cache_save(G,:info_map,d)
+    cache_save(G, :info_map, d)
     return d
 end
 
@@ -226,7 +226,7 @@ vertices of `G` to `H`.
 function iso(G::SimpleGraph, H::SimpleGraph)
 
     # quickly rule out some easily detected nonisomorphic graphs
-    if !fast_iso_test(G,H) || uhash(G) != uhash(H)
+    if !fast_iso_test(G, H) || uhash(G) != uhash(H)
         error(iso_err_msg)
     end
 
@@ -256,32 +256,33 @@ function iso(G::SimpleGraph, H::SimpleGraph)
 
     for v in VG
         x = dG[v]
-        push!(xG[x],v)
+        push!(xG[x], v)
     end
 
     for v in VH
         x = dH[v]
-        push!(xH[x],v)
+        push!(xH[x], v)
     end
 
     MOD = Model(get_solver())
 
-    @variable(MOD, x[VG,VH],Bin)
+    @variable(MOD, x[VG, VH], Bin)
 
     for v in VG
-        @constraint(MOD, sum(x[v,VH[k]] for k=1:n)==1)
+        @constraint(MOD, sum(x[v, VH[k]] for k = 1:n) == 1)
     end
 
     for w in VH
-        @constraint(MOD, sum(x[VG[k],w] for k=1:n)==1)
+        @constraint(MOD, sum(x[VG[k], w] for k = 1:n) == 1)
     end
 
     for v in VG
         for w in VH
-            @constraint(MOD,
-                           sum( has(G,v,VG[k])*x[VG[k],w] for k=1:n ) ==
-                           sum( x[v,VH[k]]*has(H,VH[k],w) for k=1:n )
-                           )
+            @constraint(
+                MOD,
+                sum(has(G, v, VG[k]) * x[VG[k], w] for k = 1:n) ==
+                sum(x[v, VH[k]] * has(H, VH[k], w) for k = 1:n)
+            )
         end
     end
 
@@ -291,10 +292,8 @@ function iso(G::SimpleGraph, H::SimpleGraph)
     for val in unique(valsG)
         SG = collect(xG[val])
         SH = collect(xH[val])
-        s  = length(SG)
-        @constraint(MOD,
-                       sum(x[u,v] for u in SG for v in SH)==s
-                       )
+        s = length(SG)
+        @constraint(MOD, sum(x[u, v] for u in SG for v in SH) == s)
     end
 
     optimize!(MOD)
@@ -306,11 +305,11 @@ function iso(G::SimpleGraph, H::SimpleGraph)
 
     X = value.(x)
 
-    result = Dict{eltype(G), eltype(H)}()
+    result = Dict{eltype(G),eltype(H)}()
 
     for v in VG
         for w in VH
-            if X[v,w] > 0
+            if X[v, w] > 0
                 result[v] = w
             end
         end
@@ -325,8 +324,8 @@ function matrix_moments(A, max_exp::Int = 10)
     result = zeros(Int, max_exp)
     B = copy(A)
 
-    for t=1:max_exp
-        B = A*B
+    for t = 1:max_exp
+        B = A * B
         result[t] = tr(B)
     end
     return result
@@ -341,15 +340,15 @@ graphs will produce the same value. We hope that nonisomorphic graphs
 will create different values, but, alas, that need not be the case.
 """
 function uhash(G::SimpleGraph)
-    if cache_check(G,:uhash)
-      return cache_recall(G,:uhash)
+    if cache_check(G, :uhash)
+        return cache_recall(G, :uhash)
     end
 
     v1 = sort(collect(values(info_map(G))))
 
     A = adjacency(G)
     B = deepcopy(A)
-    depth = min(10,NV(G))
+    depth = min(10, NV(G))
 
     v2 = matrix_moments(adjacency(G))
     v3 = matrix_moments(laplace(G))
@@ -359,6 +358,6 @@ function uhash(G::SimpleGraph)
 
 
     x = hash(vv)
-    cache_save(G,:uhash,x)
+    cache_save(G, :uhash, x)
     return x
 end

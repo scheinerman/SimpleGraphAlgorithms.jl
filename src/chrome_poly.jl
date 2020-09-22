@@ -1,6 +1,6 @@
 using SimplePolynomials, SimplePartitions
 import Base.length, Base.setindex!, Base.getindex
-export chrome_poly, reset_cpm, size_cpm
+export chromatic_poly, reset_cpm, size_cpm
 
 const CPM_pair = Tuple{SimpleGraph,SimplePolynomial}
 const CPM_dict = Dict{UInt64,Vector{CPM_pair}}
@@ -9,7 +9,7 @@ const CPM_dict = Dict{UInt64,Vector{CPM_pair}}
 mutable struct ChromePolyMemo
     D::CPM_dict
     function ChromePolyMemo()
-        new( CPM_dict() )
+        new(CPM_dict())
     end
 end
 
@@ -33,7 +33,7 @@ function size_cpm()
 end
 
 function show(io::IO, CPM::ChromePolyMemo)
-    print(io,"ChromePolyMemo with $(length(CPM)) graphs")
+    print(io, "ChromePolyMemo with $(length(CPM)) graphs")
 end
 
 function length(CPM::ChromePolyMemo)
@@ -55,8 +55,8 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::SimplePolynomial)
 
     # have we seen this graph's uhash before?
     # if no, create a new entry in the Memo
-    if !haskey(CPM.D,index)
-        CPM.D[index] = [(G,P)]
+    if !haskey(CPM.D, index)
+        CPM.D[index] = [(G, P)]
         return
     end
 
@@ -64,17 +64,17 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::SimplePolynomial)
     # see if we've seen this graph (or one isomorphic to it) before.
 
     # Recall those graphs with matching uhash
-    for (H,Q) in CPM.D[index]
-        if is_iso(G,H) # if isomorphic, nothing to add
+    for (H, Q) in CPM.D[index]
+        if is_iso(G, H) # if isomorphic, nothing to add
             return
         end
     end
 
     # otherwise, add this polynomial to the end of the list
-    push!(CPM.D[index], (G,P))
+    push!(CPM.D[index], (G, P))
 end
 
-setindex!(CPM,P,G) = remember!(CPM,G,P)
+setindex!(CPM, P, G) = remember!(CPM, G, P)
 
 
 """
@@ -87,8 +87,8 @@ function recall(CPM::ChromePolyMemo, G::SimpleGraph)
     ds = uhash(G)
     SG = CPM.D[ds]  # This may throw an error if not found. That's good.
 
-    for (H,Q) in SG
-        if is_iso(G,H)
+    for (H, Q) in SG
+        if is_iso(G, H)
             return Q
         end
     end
@@ -97,10 +97,10 @@ function recall(CPM::ChromePolyMemo, G::SimpleGraph)
     error("Graph not found")
 end
 
-getindex(CPM,G) = recall(CPM,G)
+getindex(CPM, G) = recall(CPM, G)
 
 """
-`chrome_poly(G)` computes the chromatic polynomial of the graph `G`.
+`chromatic_poly(G)` computes the chromatic polynomial of the graph `G`.
 If `G` is a directe graph, this returns the chromatic polynomial of
 `G`'s underlying simple graph.
 
@@ -110,29 +110,29 @@ frequent isomorphism checks.
 
 See `size_cpm` and `reset_cpm`.
 """
-function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
-  if cache_check(G,:chrome_poly)
-    return G.cache[:chrome_poly]
-  end
+function chromatic_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
+    if cache_check(G, :chrome_poly)
+        return G.cache[:chrome_poly]
+    end
 
     n::Int = NV(G)
     m::Int = NE(G)
 
     # Special case: no vertices
-    if n==0
+    if n == 0
         return SimplePolynomial([1])
     end
 
     # Special case: no edges
-    if m==0
+    if m == 0
         x = getx()
         return x^n
     end
 
     # Special case: complete graph
-    if 2m == n*(n-1)
+    if 2m == n * (n - 1)
         x = getx()
-        return prod(x-k for k=0:n-1)
+        return prod(x - k for k = 0:n-1)
         # return fromroots(0:n-1)
     end
 
@@ -141,19 +141,20 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
     if length(comps) > 1
         result = SimplePolynomial([1])
         for A in comps
-            H = induce(G,A)
-            result *= chrome_poly(H)
+            H = induce(G, A)
+            result *= chromatic_poly(H)
         end
         return result
     end
 
     # Special case: Tree
-    if m == n-1
-        return SimplePolynomial([0,1]) * SimplePolynomial([-1,1])^(n-1)
+    if m == n - 1
+        return SimplePolynomial([0, 1]) * SimplePolynomial([-1, 1])^(n - 1)
     end
 
     # See if we've computed this chromatic polynomial of this graph before
-    try P = _CPM[G]
+    try
+        P = _CPM[G]
         return P
     catch
     end
@@ -162,7 +163,7 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
 
     # Find a vertex u of minimum degree
     min_d = minimum(deg(G))
-    smalls = filter(v -> deg(G,v) == min_d, G.V)
+    smalls = filter(v -> deg(G, v) == min_d, G.V)
     u = first(smalls)
 
     # And choose any neighbor
@@ -170,24 +171,24 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
 
 
     # Special case to speed up handling leaves
-    if min_d==1
+    if min_d == 1
         GG = deepcopy(G)
-        delete!(GG,u)
-        p1 = chrome_poly(GG)
-        P = p1 * SimplePolynomial([-1,1])
+        delete!(GG, u)
+        p1 = chromatic_poly(GG)
+        P = p1 * SimplePolynomial([-1, 1])
         _CPM[G] = P
         return P
     end
 
     # p1 is chrome_poly of G-e
     GG = deepcopy(G)
-    delete!(GG,u,v)
-    p1 = chrome_poly(GG)
+    delete!(GG, u, v)
+    p1 = chromatic_poly(GG)
 
     # p2 is chrome_poly of G/e
     GG = deepcopy(G)
-    contract!(GG,u,v)
-    p2 = chrome_poly(GG)
+    contract!(GG, u, v)
+    p2 = chromatic_poly(GG)
 
     P = p1 - p2
 
@@ -196,4 +197,4 @@ function chrome_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
     return P
 end
 
-chrome_poly(G::SimpleDigraph) = chrome_poly(simplify(G))
+chromatic_poly(G::SimpleDigraph) = chromatic_poly(simplify(G))

@@ -23,7 +23,7 @@ X = kfactor(H,3)
 @test length(X) == 30
 
 # Vertex coloring
-f = color(G,6)
+f = vertex_color(G,6)
 @test length(f) == 17
 
 # Edge coloring
@@ -47,7 +47,7 @@ A = min_edge_cover(G)
 @test mad(G) == maximum(deg(G))
 
 # Chromatic Polynomial
-f = chrome_poly(Cycle(5))
+f = chromatic_poly(Cycle(5))
 @test f(2) == 0
 @test f(3) == 30
 

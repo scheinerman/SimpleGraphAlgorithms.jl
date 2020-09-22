@@ -6,11 +6,15 @@ module that rely on integer programming. In addition to requiring the
 `SimpleGraphs` module, it also requires `JuMP` and `MathProgBase`
 which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
-**New**: ~~Now requires the `Polynomials` module.~~ As of version 0.4.2, 
+**New**: As of version 0.4.2, 
 this module uses the `SimplePolynomials` module instead of `Polynomials`.
 
 **Note**: Because these functions rely on solving integer linear
   programs, they can be rather slow for large graphs.
+
+**Note**: Some name changes as of version 0.4.4:
+* `color` is now `vertex_color` to avoid conflict with `Plots`.
+* `chome_poly` is now `chromatic_poly`.
 
 ## Functions
 
@@ -67,20 +71,19 @@ this module uses the `SimplePolynomials` module instead of `Polynomials`.
 * `info_map(G)` creates a mapping from the vertices of `G` to 128-bit
   integers. If there is an automorphism between a pair of vertices,
   then they will map to the same value, and the converse is *likely*
-  to be true. This is used by `iso2` as part of the preprocessing
-  phase.
+  to be true. 
 
 * `uhash(G)` creates a hash value for the graph `G` with the property
    that isomorphic graphs have the same hash value.
 
 #### Coloring
 
-* `color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
+* `vertex_color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
 
 * `chromatic_number(G)` returns the least `k` such that `G` is `k`-colorable.
 
-* `chrome_poly(G)` computes the chromatic polynomial of `G`. (See the
+* `chromatic_poly(G)` computes the chromatic polynomial of `G`. (See the
   `help` message for more information.)
 
 * `edge_color(G,k)` returns a `k`-edge-coloring of `G`.

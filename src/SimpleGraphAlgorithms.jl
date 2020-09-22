@@ -30,7 +30,7 @@ to be the `Gurobi` solver. Requires the user to invoke
 
 See also `use_Cbc`.
 """
-function use_Gurobi(verbose::Bool=false)
+function use_Gurobi(verbose::Bool = false)
     set_solver(Main.Gurobi)
     set_solver_verbose(verbose)
     nothing
@@ -43,7 +43,7 @@ is loaded.
 
 See also `use_Gurobi`.
 """
-function use_Cbc(verbose::Bool=false)
+function use_Cbc(verbose::Bool = false)
     set_solver(Cbc)
     set_solver_verbose(verbose)
     nothing
@@ -63,8 +63,8 @@ import SimpleGraphs.cache_save
 `SimpleGraph`.
 """
 function max_indep_set(G::SimpleGraph)
-    if cache_check(G,:max_indep_set)
-        return cache_recall(G,:max_indep_set)
+    if cache_check(G, :max_indep_set)
+        return cache_recall(G, :max_indep_set)
     end
     VV = vlist(G)
     EE = elist(G)
@@ -72,18 +72,18 @@ function max_indep_set(G::SimpleGraph)
     m = NE(G)
 
     MOD = Model(get_solver())
-    @variable(MOD, x[VV],Bin)
+    @variable(MOD, x[VV], Bin)
     for e in EE
-        u,v = e
-        @constraint(MOD,x[u]+x[v]<=1)
+        u, v = e
+        @constraint(MOD, x[u] + x[v] <= 1)
     end
-    @objective(MOD,Max,sum(x[v] for v in VV))
+    @objective(MOD, Max, sum(x[v] for v in VV))
     optimize!(MOD)
 
     X = value.(x)
-    A = Set([v for v in VV if X[v]>0.1])
+    A = Set([v for v in VV if X[v] > 0.1])
 
-    cache_save(G,:max_indep_set, A)
+    cache_save(G, :max_indep_set, A)
     return A
 end
 
@@ -107,8 +107,8 @@ function min_vertex_cover(G::SimpleGraph, k::Int)
 
     # edge constraints
     for f in Es
-        u,v = f
-        @constraint(MOD, x[u]+x[v] >= y[f])
+        u, v = f
+        @constraint(MOD, x[u] + x[v] >= y[f])
     end
 
     # assure proper size
@@ -124,7 +124,7 @@ function min_vertex_cover(G::SimpleGraph, k::Int)
     end
 
     XX = value.(x)
-    A = Set([v for v in Vs if XX[v]> 0.1])
+    A = Set([v for v in Vs if XX[v] > 0.1])
     return A
 end
 
@@ -132,20 +132,20 @@ end
 `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
 """
 function max_clique(G::SimpleGraph)
-  if cache_check(G,:max_clique)
-    return cache_recall(G,:max_clique)
-  end
-  result = max_indep_set(G')
-  cache_save(G,:max_clique,result)
-  return result
+    if cache_check(G, :max_clique)
+        return cache_recall(G, :max_clique)
+    end
+    result = max_indep_set(G')
+    cache_save(G, :max_clique, result)
+    return result
 end
 
 """
 `max_matching(G)` returns a maximum matching of a `SimpleGraph`.
 """
 function max_matching(G::SimpleGraph)
-    if cache_check(G,:max_matching)
-      return cache_recall(G,:max_matching)
+    if cache_check(G, :max_matching)
+        return cache_recall(G, :max_matching)
     end
     VV = vlist(G)
     EE = elist(G)
@@ -156,7 +156,7 @@ function max_matching(G::SimpleGraph)
     @variable(MOD, x[EE], Bin)
 
     for v in VV
-        star = [e for e in EE if e[1]==v || e[2]==v]
+        star = [e for e in EE if e[1] == v || e[2] == v]
         @constraint(MOD, sum(x[e] for e in star) <= 1)
     end
 
@@ -164,9 +164,9 @@ function max_matching(G::SimpleGraph)
 
     optimize!(MOD)
     X = value.(x)
-    M = Set([e for e in EE if X[e]>0.1])
+    M = Set([e for e in EE if X[e] > 0.1])
 
-    cache_save(G,:max_matching,M)
+    cache_save(G, :max_matching, M)
     return M
 end
 
@@ -177,17 +177,17 @@ every vertex of `G` is the end point of at least one edge in `F`. An
 error is raised if `G` has a vertex of degree 0.
 """
 function min_edge_cover(G::SimpleGraph)
-    if cache_check(G,:min_edge_cover)
-      return cache_recall(G,:min_edge_cover)
+    if cache_check(G, :min_edge_cover)
+        return cache_recall(G, :min_edge_cover)
     end
 
     if NV(G) == 0
-      T = eltype(G)
-      S = Tuple{T,T}
-      return Set{S}()
+        T = eltype(G)
+        S = Tuple{T,T}
+        return Set{S}()
     end
 
-    if minimum(deg(G))==0
+    if minimum(deg(G)) == 0
         error("Graph has an isolated vertex; no minimum edge cover exists.")
     end
 
@@ -200,7 +200,7 @@ function min_edge_cover(G::SimpleGraph)
     @variable(MOD, x[EE], Bin)
 
     for v in VV
-        star = [e for e in EE if e[1]==v || e[2]==v]
+        star = [e for e in EE if e[1] == v || e[2] == v]
         @constraint(MOD, sum(x[e] for e in star) >= 1)
     end
 
@@ -208,9 +208,9 @@ function min_edge_cover(G::SimpleGraph)
 
     optimize!(MOD)
     X = value.(x)
-    A = Set([e for e in EE if X[e]>0.1])
+    A = Set([e for e in EE if X[e] > 0.1])
 
-    cache_save(G,:min_edge_cover,A)
+    cache_save(G, :min_edge_cover, A)
     return A
 end
 
@@ -221,13 +221,13 @@ every vertex of `G` either is in `S` or is adjacent to a vertex of
 `S`.
 """
 function min_dom_set(G::SimpleGraph)
-    if cache_check(G,:min_dom_set)
-      return cache_recall(G,:min_dom_set)
+    if cache_check(G, :min_dom_set)
+        return cache_recall(G, :min_dom_set)
     end
     n = NV(G)
-    if n==0
-      T = eltype(G)
-      return Set{T}()
+    if n == 0
+        T = eltype(G)
+        return Set{T}()
     end
 
     VV = vlist(G)
@@ -237,7 +237,7 @@ function min_dom_set(G::SimpleGraph)
 
     for v in VV
         Nv = G[v]
-        push!(Nv,v)
+        push!(Nv, v)
         @constraint(MOD, sum(x[w] for w in Nv) >= 1)
     end
 
@@ -246,9 +246,9 @@ function min_dom_set(G::SimpleGraph)
 
     X = value.(x)
 
-    S = Set(v for v in VV if X[v]>0.1)
+    S = Set(v for v in VV if X[v] > 0.1)
 
-    cache_save(G,:min_dom_set,S)
+    cache_save(G, :min_dom_set, S)
     return S
 end
 
