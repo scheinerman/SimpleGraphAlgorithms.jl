@@ -17,7 +17,7 @@ Cbc = "0.4, 0.5, 0.6, 0.7"
 ChooseOptimizer = "0.1"
 JuMP = "0.18, 0.19, 0.20, 0.21"
 SimplePolynomials = "0.0.1, 0.0.2, 0.0.3, 0.0.4, 0.0.5, 0.0.6, 0.1, 0.2"
-SimpleGraphs = "0.2, 0.3, 0.4, 0.5, 0.6"
+SimpleGraphs = "0.5, 0.6, 0.7"
 SimplePartitions = "0.0.1, 0.1, 0.2, 0.3"
 
 [extras]
