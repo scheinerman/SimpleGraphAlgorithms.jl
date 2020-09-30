@@ -117,78 +117,79 @@ such an edge cut set.
 ## Examples
 
 ```julia
-julia> using SimpleGraphs; using SimpleGraphAlgorithms
+julia> using SimpleGraphs; using SimpleGraphAlgorithms; using ChooseOptimizer; using ShowSet
+
+julia> set_solver_verbose(false)
+[ Info: Setting verbose option for Cbc to false
 
 julia> G = Paley(17)
-Paley(17) graph (n=17, m=68)
+Paley (n=17, m=68)
 
 julia> max_indep_set(G)
-Set([7,4,1])
+{1,4,7}
 
 julia> max_clique(G)
-Set([3,5,1])
+{3,4,5}
 
 julia> min_dom_set(G)
-Set([0,10,3])
+{3,6,9}
 
 julia> max_matching(G)
-Set([(2,3),(11,13),(15,16),(0,1),(10,14),(6,7),(4,5),(8,9)])
+{(1, 16),(2, 4),(3, 12),(5, 9),(6, 15),(7, 8),(10, 11),(13, 14)}
 
-julia> color(G,6)
+julia> vertex_color(G,6)
 Dict{Int64,Int64} with 17 entries:
-  2  => 1
-  16 => 5
-  11 => 6
-  0  => 6
-  7  => 2
-  9  => 1
-  10 => 5
+  2  => 3
+  16 => 1
+  11 => 4
+  0  => 4
+  7  => 6
+  9  => 2
+  10 => 1
   8  => 3
-  6  => 6
-  4  => 2
-  3  => 4
+  6  => 4
+  4  => 6
+  3  => 5
   5  => 3
-  13 => 5
-  14 => 4
-  15 => 3
-  12 => 1
-  1  => 2
+  13 => 1
+  14 => 5
+  15 => 2
+  12 => 2
+  1  => 6
 ```
 
 Petersen's graph can be described as either the 5,2-Kneser graph or as
 the complement of the line graph of K(5).
 
 ```julia
-julia> G = Kneser(5,2)
-Kneser(10,2) graph (n=10, m=15)
+julia> G = Kneser(5,2);
 
-julia> H = complement(line_graph(Complete(5)))
-SimpleGraph{Tuple{Int64,Int64}} (n=10, m=15)
+julia> H = complement(line_graph(Complete(5)));
 
 julia> iso(G,H)
 Dict{Set{Int64},Tuple{Int64,Int64}} with 10 entries:
-  Set([4,1]) => (4,5)
-  Set([4,5]) => (1,5)
-  Set([2,1]) => (3,4)
-  Set([3,5]) => (1,2)
-  Set([2,5]) => (1,3)
-  Set([3,1]) => (2,4)
-  Set([4,3]) => (2,5)
-  Set([4,2]) => (3,5)
-  Set([2,3]) => (2,3)
-  Set([5,1]) => (1,4)
+  {1,4} => (1, 5)
+  {2,4} => (1, 4)
+  {2,5} => (3, 4)
+  {1,3} => (2, 5)
+  {3,4} => (1, 2)
+  {1,2} => (4, 5)
+  {3,5} => (2, 3)
+  {4,5} => (1, 3)
+  {2,3} => (2, 4)
+  {1,5} => (3, 5)
 
 julia> iso_matrix(G,H)
-10x10 Array{Int64,2}:
+10×10 Array{Int64,2}:
+ 0  0  0  0  0  0  0  1  0  0
+ 0  0  0  0  0  0  0  0  1  0
  0  0  0  1  0  0  0  0  0  0
+ 0  0  0  0  0  1  0  0  0  0
+ 0  0  0  0  1  0  0  0  0  0
  0  0  0  0  0  0  0  0  0  1
  1  0  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  1  0  0
- 0  0  0  0  0  1  0  0  0  0
  0  1  0  0  0  0  0  0  0  0
- 0  0  0  0  0  0  0  0  1  0
  0  0  0  0  0  0  1  0  0  0
- 0  0  0  0  1  0  0  0  0  0
  0  0  1  0  0  0  0  0  0  0
 ```
 

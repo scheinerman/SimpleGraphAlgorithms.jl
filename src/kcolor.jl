@@ -113,7 +113,7 @@ end
 
 function chromatic_number_work(G::SimpleGraph, lb::Int, ub::Int, verb::Bool)::Int
     if verb
-        print("$lb <= chi(G) <= $ub")
+        print("$lb <= χ(G) <= $ub")
     end
     if lb == ub
         if verb
