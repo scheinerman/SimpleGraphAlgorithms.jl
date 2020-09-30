@@ -1,5 +1,7 @@
 # SimpleGraphAlgorithms
 
+[![Build Status](https://travis-ci.com/scheinerman/SimpleGraphAlgorithms.jl.svg?branch=master)](https://travis-ci.com/scheinerman/SimpleGraphAlgorithms.jl)
+
 
 This module provides additional functions for the `SimpleGraphs`
 module that rely on integer programming. In addition to requiring the
