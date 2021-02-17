@@ -61,6 +61,8 @@ add!(H,7,0)
 @test fast_iso_test(G,H)
 f = iso(G,H)
 @test f[0] == 0
+f = iso2(G,H)
+@test f[0] == 0
 
 
 # edge and vertex connectivity

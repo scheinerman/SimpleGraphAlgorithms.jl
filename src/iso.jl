@@ -1,4 +1,4 @@
-export iso, iso_matrix, is_iso, info_map, uhash, degdeg, fast_iso_test
+export iso, iso2, iso_matrix, is_iso, info_map, uhash, degdeg, fast_iso_test
 
 
 const iso_err_msg = "The graphs are not isomorphic"
@@ -44,11 +44,7 @@ function iso_matrix(G::SimpleGraph, H::SimpleGraph)
     return Int.(value.(P))
 end
 
-"""
-`iso(G,H)` finds an isomorphism from `G` to `H` (or throws an error if
-the graphs are not isomorphic). Returns a dictionary mapping the
-vertices of `G` to `H`.
-"""
+
 
 """
 `is_iso(G,H,d)` checks if `d` is an isomorphism from `G` to `H`.
@@ -222,6 +218,8 @@ end
 `iso(G,H)` finds an isomorphism from `G` to `H` (or throws an error if
 the graphs are not isomorphic). Returns a dictionary mapping the
 vertices of `G` to `H`.
+
+See also: `iso2`.
 """
 function iso(G::SimpleGraph, H::SimpleGraph)
 
@@ -316,6 +314,67 @@ function iso(G::SimpleGraph, H::SimpleGraph)
     end
     return result
 end
+
+
+"""
+`iso2(G,H)` is another version of `iso(G,H)` that does much less preprocessing.
+It may be faster for highly symmetric graphs (e.g., vertex transitive graphs).
+"""
+function iso2(G::SimpleGraph{S}, H::SimpleGraph{T}) where {S,T}
+    if NV(G) != NV(H)
+        error(iso_err_msg)
+    end
+
+    m = Model(get_solver())
+
+
+    @variable(m, P[G.V, H.V], Bin)
+
+    for v in G.V
+        for x in H.V
+            @constraint(
+                m,
+                sum(G[v, w] * P[w, x] for w in G.V) == sum(P[v, y] * H[y, x] for y in H.V)
+            )
+        end
+    end
+
+    for v in G.V
+        @constraint(m, sum(P[v, x] for x in H.V) == 1)
+    end
+
+    for x in H.V
+        @constraint(m, sum(P[v, x] for v in G.V) == 1)
+    end
+
+    optimize!(m)
+    status = Int(termination_status(m))
+
+    if status != 1
+        error(iso_err_msg)
+    end
+
+    PP = Int.(value.(P))
+
+    result = Dict{S,T}()
+
+    for v in G.V
+        for x in H.V
+            if PP[v, x] > 0
+                result[v] = x
+            end
+        end
+    end
+
+
+    return result
+
+end
+
+
+
+
+
 
 using LinearAlgebra
 

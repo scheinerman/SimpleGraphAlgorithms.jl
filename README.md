@@ -57,7 +57,11 @@ this module uses the `SimplePolynomials` module instead of `Polynomials`.
 * `iso(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
   the vertices of `H` that gives the isomorphism. If the graphs are
-  not isomorphic, an error is raised.
+  not isomorphic, an error is raised. 
+
+* `iso2(G,H)` has the same functionality as `iso` but omits various 
+preliminary checks. This may be faster for highly symmetric graphs 
+(e.g., for vertex transitive graphs).
 
 * `is_iso(G,H)` checks if the two graphs are isomorphic.
 
