@@ -30,6 +30,10 @@ this module uses the `SimplePolynomials` module instead of `Polynomials`.
 * `max_matching(G)` returns a maximum size matching of a
   `SimpleGraph`.
 
+* `fractional_matching(G)` returns a (maximum) fractional matching of the 
+graph `G`. This is presented a dictionary mapping edges of `G` to rational values 
+in `{0, 1/2, 1}`. 
+
 * `kfactor(G,k)` returns a `k`-factor of `G`. This is a set of edges
   with the property that every vertex of `G` is incident with exactly `k`
   edges of the set. An error is thrown if no such set exists.

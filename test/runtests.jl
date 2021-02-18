@@ -18,6 +18,9 @@ f = iso(G, G')
 M = max_matching(G)
 @test length(M) == 8
 
+d = fractional_matching(Cycle(5))
+@test sum(values(d)) == 5 // 2
+
 H = Dodecahedron()
 X = kfactor(H, 3)
 @test length(X) == 30
