@@ -8,15 +8,6 @@ module that rely on integer programming. In addition to requiring the
 `SimpleGraphs` module, it also requires `JuMP` and `MathProgBase`
 which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
-**New**: As of version 0.4.2, 
-this module uses the `SimplePolynomials` module instead of `Polynomials`.
-
-**Note**: Because these functions rely on solving integer linear
-  programs, they can be rather slow for large graphs.
-
-**Note**: Some name changes as of version 0.4.4:
-* `color` is now `vertex_color` to avoid conflict with `Plots`.
-* `chome_poly` is now `chromatic_poly`.
 
 ## Functions
 
@@ -95,7 +86,8 @@ preliminary checks. This may be faster for highly symmetric graphs
 #### Coloring
 
 * `vertex_color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
-  such coloring exists).
+such coloring exists). If `k` is omitted, the number of colors is `χ(G)` 
+(chromatic number).
 
 * `vertex_color(G,a,b)` returns an `a:b`-coloring of `G` (or throws an error
 if no such coloring exists). An `a:b`-coloring is a mapping from the vertices of

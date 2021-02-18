@@ -2,6 +2,8 @@ export vertex_color, chromatic_number
 
 """
 `vertex_color(G,k)`: Return a `k`-coloring of `G` (or error if none exists).
+
+If `k` is omitted, the chromatic number of `G` is used.
 """
 function vertex_color(G::SimpleGraph, k::Int)
     VV = vlist(G)
@@ -77,6 +79,8 @@ function vertex_color(G::SimpleGraph, k::Int)
 
     return result
 end
+
+vertex_color(G::SimpleGraph) = vertex_color(G, chromatic_number(G))
 
 """
 `vertex_color(G,a,b)` returns an `a:b`-coloring of the graph `G`.
