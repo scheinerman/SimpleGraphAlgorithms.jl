@@ -78,6 +78,22 @@ function vertex_color(G::SimpleGraph, k::Int)
     return result
 end
 
+"""
+`vertex_color(G,a,b)` returns an `a:b`-coloring of the graph `G`.
+This is a mapping from the vertices of `G` to `b`-element subsets of 
+`{1,2,...,a}` such that adjacent vertices are assigned disjoint sets.
+An error is thrown if no such coloring exists.
+"""
+function vertex_color(G::SimpleGraph, a::Int, b::Int)
+    if a < 0 || b < 0
+        error("Arguments in vertex_color(G,$a,$b) must be nonnegative")
+    end
+    try
+        return hom(G, Kneser(a, b))
+    catch
+        error("This graph does not have a $a:$b coloring")
+    end
+end
 
 
 

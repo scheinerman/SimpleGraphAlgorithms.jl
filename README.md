@@ -93,6 +93,11 @@ preliminary checks. This may be faster for highly symmetric graphs
 * `vertex_color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
   such coloring exists).
 
+* `vertex_color(G,a,b)` returns an `a:b`-coloring of `G` (or throws an error
+if no such coloring exists). An `a:b`-coloring is a mapping from the vertices of
+`G` to `b`-element subsets of `{1,2,...,a}` such that adjacent vertices are 
+assigned disjoint sets. 
+
 * `chromatic_number(G)` returns the least `k` such that `G` is `k`-colorable.
 
 * `chromatic_poly(G)` computes the chromatic polynomial of `G`. (See the
