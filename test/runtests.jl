@@ -64,6 +64,9 @@ f = iso(G,H)
 f = iso2(G,H)
 @test f[0] == 0
 
+d = hom(Cube(3), Complete(2))
+@test d["000"] != d["001"]
+
 
 # edge and vertex connectivity
 G = Complete(8,8)'

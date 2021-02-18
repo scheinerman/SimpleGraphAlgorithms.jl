@@ -253,6 +253,7 @@ function min_dom_set(G::SimpleGraph)
 end
 
 include("iso.jl")
+include("hom.jl")
 include("kcolor.jl")
 include("chrome_poly.jl")
 include("edge-coloring.jl")

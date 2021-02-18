@@ -52,7 +52,7 @@ this module uses the `SimplePolynomials` module instead of `Polynomials`.
   vertex, then no edge cover is possible and error is generated.
 
 
-#### Isomorphism
+#### Isomorphism 
 
 * `iso(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
@@ -73,6 +73,12 @@ preliminary checks. This may be faster for highly symmetric graphs
   `A*P==P*B` where `A` and `B` are the adjacency matrices of the
   graphs `G` and `H`, respectively. If the graphs are not isomorphic,
   an error is raised.
+
+* `hom(G,H)` finds a graph homomorphism from `G` to `H`. This is a mapping `f`
+(dictionary) with the property that if `{u,v}` is an edge of `G` then
+`{f[u],f[v]}` is an edge of `H`. If no homomorphism exists an error is raised.
+
+* `hom_check(G,H,d)` determines if `d` is a homomorphism from `G` to `H`.
 
 * `info_map(G)` creates a mapping from the vertices of `G` to 128-bit
   integers. If there is an automorphism between a pair of vertices,
