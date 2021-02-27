@@ -254,7 +254,7 @@ end
 
 include("iso.jl")
 include("hom.jl")
-include("kcolor.jl")
+include("vertex-coloring.jl")
 include("chrome_poly.jl")
 include("edge-coloring.jl")
 include("mad.jl")
