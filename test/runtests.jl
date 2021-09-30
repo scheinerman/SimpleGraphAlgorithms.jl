@@ -80,3 +80,9 @@ add!(G, 1, 9)
 add!(G, 1, 10)
 @test edge_connectivity(G) == 2
 @test connectivity(G) == 1
+
+
+# fractional Isomorphism
+G = Dodecahedron()
+H = RandomRegular(20, 3)
+@test is_frac_iso(G, H)

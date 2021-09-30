@@ -1,6 +1,5 @@
 # SimpleGraphAlgorithms
 
-[![Build Status](https://travis-ci.com/scheinerman/SimpleGraphAlgorithms.jl.svg?branch=master)](https://travis-ci.com/scheinerman/SimpleGraphAlgorithms.jl)
 
 
 This module provides additional functions for the `SimpleGraphs`
@@ -11,7 +10,7 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 ## Functions
 
-#### Cliques and independent sets
+### Cliques and independent sets
 
 * `max_indep_set(G)` returns a maximum size independent set of a
   `SimpleGraph`.
@@ -30,7 +29,7 @@ in `{0, 1/2, 1}`.
   edges of the set. An error is thrown if no such set exists.
   (When `k==1` this returns a perfect matching.)
 
-#### Covering and domination
+### Covering and domination
 
 * `min_dom_set(G)` returns a smallest dominating set of a
   `SimpleGraph`. That is, a smallest set `S` with the property that
@@ -47,7 +46,7 @@ in `{0, 1/2, 1}`.
   vertex, then no edge cover is possible and error is generated.
 
 
-#### Isomorphism 
+### Isomorphism 
 
 * `iso(G,H)` finds an isomorphism between graphs `G` and
   `H`. Specifically, it finds a `Dict` mapping the vertices of `G` to
@@ -69,6 +68,14 @@ preliminary checks. This may be faster for highly symmetric graphs
   graphs `G` and `H`, respectively. If the graphs are not isomorphic,
   an error is raised.
 
+* `frac_iso(G,H)` finds a fractional isomorphism between the graphs. Specifically, 
+  if `A` and `B` are the adjacency matrices of the two graphs, then produce a
+  doubly stochastic matrix `S` such that `A*S == S*B`, or throw an error if
+  no such matrix exists.
+
+* `is_frac_iso(G,H)` returns `true` if the graphs are fractionally isomorphic
+  and `false` if not. 
+
 * `hom(G,H)` finds a graph homomorphism from `G` to `H`. This is a mapping `f`
 (dictionary) with the property that if `{u,v}` is an edge of `G` then
 `{f[u],f[v]}` is an edge of `H`. If no homomorphism exists an error is raised.
@@ -83,7 +90,7 @@ preliminary checks. This may be faster for highly symmetric graphs
 * `uhash(G)` creates a hash value for the graph `G` with the property
    that isomorphic graphs have the same hash value.
 
-#### Coloring
+### Coloring
 
 * `vertex_color(G,k)` returns a `k`-coloring of `G` (or throws an error if no
 such coloring exists). If `k` is omitted, the number of colors is `χ(G)` 
@@ -104,7 +111,7 @@ assigned disjoint sets.
 * `edge_chromatic_number(G)` returns the edge chromatic number of `G`.
 
 
-#### Connectivity
+### Connectivity
 
 * `min_cut(G)` returns a minimum size (vertex) cut set. `min_cut(G,s,t)`
 return a smallest set of vertices that separate `s` and `t`.
@@ -119,7 +126,7 @@ return a smallest set of vertices that separate `s` and `t`.
 such an edge cut set.
 
 
-#### Maximum average degree
+### Maximum average degree
 
 * `ad(G)` returns the average degree of `G`.
 

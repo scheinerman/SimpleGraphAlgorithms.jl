@@ -261,5 +261,6 @@ include("mad.jl")
 include("kfactor.jl")
 include("connectivity.jl")
 include("fmatch.jl")
+include("frac_iso.jl")
 
 end # of module SimpleGraphAlgorithms
