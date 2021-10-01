@@ -8,7 +8,7 @@ are the adjacency matrices of `G` and `H` respectively.
 """
 function frac_iso(G::SimpleGraph, H::SimpleGraph)
     if deg(G) != deg(H)  # quick basic check before LP
-        return false
+        error("The graphs are not fractionally isomorphic")
     end
     A = adjacency(G)
     B = adjacency(H)
