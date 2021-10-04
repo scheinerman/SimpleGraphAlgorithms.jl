@@ -7,7 +7,7 @@ Find a doubly stochastic matrix `S` so that `AS=SB` where `A` and `B`
 are the adjacency matrices of `G` and `H` respectively.
 """
 function frac_iso(G::SimpleGraph, H::SimpleGraph)
-    if deg(G) != deg(H)  # quick basic check before LP
+    if deg(G) != deg(H) || degdeg(G) != degdeg(H) # quick basic check before LP
         error("The graphs are not fractionally isomorphic")
     end
     A = adjacency(G)
