@@ -19,7 +19,7 @@ function frac_iso(A::Matrix, B::Matrix)
     n, c = size(A)
     nn, cc = size(B)
     @assert n == c && nn == cc "Matrices must be square"
-    @assert n == n "Matrices must have the same size"
+    @assert n == nn "Matrices must have the same size"
 
     m = Model(get_solver())
 
