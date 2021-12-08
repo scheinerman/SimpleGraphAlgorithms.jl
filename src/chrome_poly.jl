@@ -74,7 +74,7 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::SimplePolynomial)
     push!(CPM.D[index], (G, P))
 end
 
-setindex!(CPM, P, G) = remember!(CPM, G, P)
+setindex!(CPM::ChromePolyMemo, P::SimplePolynomial, G::SimpleGraph) = remember!(CPM, G, P)
 
 
 """
@@ -97,7 +97,7 @@ function recall(CPM::ChromePolyMemo, G::SimpleGraph)
     error("Graph not found")
 end
 
-getindex(CPM, G) = recall(CPM, G)
+getindex(CPM::ChromePolyMemo, G::SimpleGraph) = recall(CPM, G)
 
 """
 `chromatic_poly(G)` computes the chromatic polynomial of the graph `G`.
