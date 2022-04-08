@@ -1,6 +1,6 @@
 name = "SimpleGraphAlgorithms"
 uuid = "41400c72-0c58-5c16-8579-4ecbce768449"
-version = "0.4.17"
+version = "0.4.18"
 
 [deps]
 Cbc = "9961bab8-2fa3-5c5a-9d89-47fab24efd76"
@@ -13,7 +13,7 @@ SimplePolynomials = "cc47b68c-3164-5771-a705-2bc0097375a0"
 
 [compat]
 julia = "1"
-Cbc = "0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.10"
+Cbc = "0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.10, 1"
 ChooseOptimizer = "0.1"
 JuMP = "0.18, 0.19, 0.20, 0.21, 0.22, 1"
 SimplePolynomials = "0.0.1, 0.0.2, 0.0.3, 0.0.4, 0.0.5, 0.0.6, 0.1, 0.2"
