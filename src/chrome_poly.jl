@@ -197,4 +197,4 @@ function chromatic_poly(G::UG) #, CPM::ChromePolyMemo = _CPM)
     return P
 end
 
-chromatic_poly(G::SimpleDigraph) = chromatic_poly(simplify(G))
+chromatic_poly(G::DG) = chromatic_poly(simplify(G))
