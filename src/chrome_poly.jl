@@ -2,7 +2,7 @@ using SimplePolynomials, SimplePartitions
 import Base.length, Base.setindex!, Base.getindex
 export chromatic_poly, reset_cpm, size_cpm
 
-const CPM_pair = Tuple{SimpleGraph,SimplePolynomial}
+const CPM_pair = Tuple{UG,SimplePolynomial}
 const CPM_dict = Dict{UInt64,Vector{CPM_pair}}
 
 # This is a device to record previously computed chromatic polynomials
@@ -50,7 +50,7 @@ this data structure (if it wasn't in there already).
 
 Short form: `CPM[G] = P`.
 """
-function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::SimplePolynomial)
+function remember!(CPM::ChromePolyMemo, G::UG, P::SimplePolynomial)
     index::Int128 = uhash(G)  # get the signature for this graph
 
     # have we seen this graph's uhash before?
@@ -74,7 +74,7 @@ function remember!(CPM::ChromePolyMemo, G::SimpleGraph, P::SimplePolynomial)
     push!(CPM.D[index], (G, P))
 end
 
-setindex!(CPM::ChromePolyMemo, P::SimplePolynomial, G::SimpleGraph) = remember!(CPM, G, P)
+setindex!(CPM::ChromePolyMemo, P::SimplePolynomial, G::UG) = remember!(CPM, G, P)
 
 
 """
@@ -83,7 +83,7 @@ chromatic polynomial of this graph (or something isomorphic to it).
 
 Short form: `P = CPM[G]`.
 """
-function recall(CPM::ChromePolyMemo, G::SimpleGraph)
+function recall(CPM::ChromePolyMemo, G::UG)
     ds = uhash(G)
     SG = CPM.D[ds]  # This may throw an error if not found. That's good.
 
@@ -97,7 +97,7 @@ function recall(CPM::ChromePolyMemo, G::SimpleGraph)
     error("Graph not found")
 end
 
-getindex(CPM::ChromePolyMemo, G::SimpleGraph) = recall(CPM, G)
+getindex(CPM::ChromePolyMemo, G::UG) = recall(CPM, G)
 
 """
 `chromatic_poly(G)` computes the chromatic polynomial of the graph `G`.
@@ -110,7 +110,7 @@ frequent isomorphism checks.
 
 See `size_cpm` and `reset_cpm`.
 """
-function chromatic_poly(G::SimpleGraph) #, CPM::ChromePolyMemo = _CPM)
+function chromatic_poly(G::UG) #, CPM::ChromePolyMemo = _CPM)
     if cache_check(G, :chrome_poly)
         return G.cache[:chrome_poly]
     end

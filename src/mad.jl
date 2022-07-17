@@ -4,7 +4,7 @@ export ad, mad, mad_core
 `mad_model(G)` returns the solved linear program whose optimum
 value is `mad(G)`.
 """
-function mad_model(G::SimpleGraph)
+function mad_model(G::UG)
     EE = elist(G)
     VV = vlist(G)
 
@@ -44,7 +44,7 @@ end
 `mad(G)` computes the maximum average degree of `G`.
 See also `mad_core`.
 """
-function mad(G::SimpleGraph)
+function mad(G::UG)
     if cache_check(G, :mad)
         return cache_recall(G, :mad)
     end
@@ -57,13 +57,13 @@ end
 """
 `ad(G)` is the average degree of a vertex in `G`.
 """
-ad(G::SimpleGraph) = 2 * NE(G) / NV(G)
+ad(G::UG) = 2 * NE(G) / NV(G)
 
 """
 `mad_core(G)` returns a subgraph `H` of `G` for which
 `ad(H)==mad(G)`.
 """
-function mad_core(G::SimpleGraph)
+function mad_core(G::UG)
     if cache_check(G, :mad_core)
         return cache_recall(G, :mad_core)
     end

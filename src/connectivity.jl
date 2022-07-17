@@ -11,7 +11,7 @@ export connectivity, min_cut
 
 `min_cut(G,s,t)` returns a minimum size cut that separates `s` and `t`.
 """
-function min_cut(G::SimpleGraph{T}, s::T, t::T, flag::Bool = true)::Set{T} where {T}
+function min_cut(G::UG{T}, s::T, t::T, flag::Bool = true)::Set{T} where {T}
     n = NV(G)
     m = NE(G)
     n * (n - 1) != 2m || error("Graph must not be complete")
@@ -74,7 +74,7 @@ function min_cut(G::SimpleGraph{T}, s::T, t::T, flag::Bool = true)::Set{T} where
     return X
 end
 
-function min_cut(G::SimpleGraph)::Set
+function min_cut(G::UG)::Set
     n = NV(G)
     n > 1 || error("Graph must have at least two vertices")
     s = first(G.V)
@@ -86,7 +86,7 @@ end
 the minimum size of a vertex cut set. If `G` is a complete graph with
 `n` vertices, the connectivity is `n-1` (or `0` for the empty graph).
 """
-function connectivity(G::SimpleGraph)::Int
+function connectivity(G::UG)::Int
     n = NV(G)
     m = NE(G)
     if n * (n - 1) == 2m   # graph is complete
@@ -108,12 +108,7 @@ disconnects `G`. The graph must have at least two vertices.
 `min_edge_cut(G,s,t)` is a minimum size set of edges whose removal
 separates vertices `s` and `t`.
 """
-function min_edge_cut(
-    G::SimpleGraph{T},
-    s::T,
-    t::T,
-    flag::Bool = true,
-)::Set{Tuple{T,T}} where {T}
+function min_edge_cut(G::UG{T}, s::T, t::T, flag::Bool = true)::Set{Tuple{T,T}} where {T}
     n = NV(G)
     n > 1 || error("Graph must have at least two vertices")
 
@@ -176,7 +171,7 @@ function min_edge_cut(
     return X
 end
 
-function min_edge_cut(G::SimpleGraph)::Set
+function min_edge_cut(G::UG)::Set
     n = NV(G)
     n > 1 || error("Graph must have at least two vertices")
     s = first(G.V)
@@ -189,5 +184,5 @@ end
 `edge_connectivity(G,s,t)` determines the minimum size of an edge cut
 separating `s` and `t`.
 """
-edge_connectivity(G::SimpleGraph)::Int = length(min_edge_cut(G))
-edge_connectivity(G::SimpleGraph, s, v) = length(min_edge_cut(G, s, t))
+edge_connectivity(G::UG)::Int = length(min_edge_cut(G))
+edge_connectivity(G::UG, s, v) = length(min_edge_cut(G, s, t))

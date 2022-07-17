@@ -6,7 +6,7 @@ export frac_iso, is_frac_iso
 Find a doubly stochastic matrix `S` so that `AS=SB` where `A` and `B`
 are the adjacency matrices of `G` and `H` respectively.
 """
-function frac_iso(G::SimpleGraph, H::SimpleGraph)
+function frac_iso(G::UG, H::UG)
     if deg(G) != deg(H) || degdeg(G) != degdeg(H) # quick basic check before LP
         error("The graphs are not fractionally isomorphic")
     end
@@ -57,7 +57,7 @@ end
     is_frac_iso(G,H)
 Test if two graphs are fractionally isomorphic.
 """
-function is_frac_iso(G::SimpleGraph, H::SimpleGraph)::Bool
+function is_frac_iso(G::UG, H::UG)::Bool
     try
         f = frac_iso(G, H)
         return true

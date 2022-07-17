@@ -12,13 +12,13 @@ which, in turn, requires that some solvers be loaded. I've used `Cbc`.
 
 ### Cliques and independent sets
 
-* `max_indep_set(G)` returns a maximum size independent set of a
-  `SimpleGraph`.
+* `max_indep_set(G)` returns a maximum size independent set of an
+  `UndirectedGraph`.
 
-* `max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
+* `max_clique(G)` returns a maximum size clique of an `UndirectedGraph`.
 
-* `max_matching(G)` returns a maximum size matching of a
-  `SimpleGraph`.
+* `max_matching(G)` returns a maximum size matching of an
+  `UndirectedGraph`.
 
 * `fractional_matching(G)` returns a (maximum) fractional matching of the 
 graph `G`. This is presented a dictionary mapping edges of `G` to rational values 
@@ -31,8 +31,8 @@ in `{0, 1/2, 1}`.
 
 ### Covering and domination
 
-* `min_dom_set(G)` returns a smallest dominating set of a
-  `SimpleGraph`. That is, a smallest set `S` with the property that
+* `min_dom_set(G)` returns a smallest dominating set of an
+  `UndirectedGraph`. That is, a smallest set `S` with the property that
   every vertex of `G` either is in `S` or is adjacent to a vertex of
   `S`.
 

@@ -5,7 +5,7 @@ export vertex_color, chromatic_number
 
 If `k` is omitted, the chromatic number of `G` is used.
 """
-function vertex_color(G::SimpleGraph, k::Int)
+function vertex_color(G::UG, k::Int)
     VV = vlist(G)
     EE = elist(G)
     n = NV(G)
@@ -80,7 +80,7 @@ function vertex_color(G::SimpleGraph, k::Int)
     return result
 end
 
-vertex_color(G::SimpleGraph) = vertex_color(G, chromatic_number(G))
+vertex_color(G::UG) = vertex_color(G, chromatic_number(G))
 
 """
 `vertex_color(G,a,b)` returns an `a:b`-coloring of the graph `G`.
@@ -88,7 +88,7 @@ This is a mapping from the vertices of `G` to `b`-element subsets of
 `{1,2,...,a}` such that adjacent vertices are assigned disjoint sets.
 An error is thrown if no such coloring exists.
 """
-function vertex_color(G::SimpleGraph, a::Int, b::Int)
+function vertex_color(G::UG, a::Int, b::Int)
     if a < 0 || b < 0
         error("Arguments in vertex_color(G,$a,$b) must be nonnegative")
     end
@@ -101,7 +101,7 @@ end
 
 
 
-function chromatic_number(G::SimpleGraph, verb::Bool = false)::Int
+function chromatic_number(G::UG, verb::Bool = false)::Int
     if cache_check(G, :chromatic_number)
         return cache_recall(G, :chromatic_number)
     end
@@ -132,7 +132,7 @@ end
 
 
 
-function chromatic_number_work(G::SimpleGraph, lb::Int, ub::Int, verb::Bool)::Int
+function chromatic_number_work(G::UG, lb::Int, ub::Int, verb::Bool)::Int
     if verb
         print("$lb ≤ χ ≤ $ub")
     end

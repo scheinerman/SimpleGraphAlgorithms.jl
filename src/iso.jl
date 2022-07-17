@@ -10,7 +10,7 @@ const iso_err_msg = "The graphs are not isomorphic"
 adjacency matrix of `H`.  If the graphs are not isomorphic, an
 error is raised.
 """
-function iso_matrix(G::SimpleGraph, H::SimpleGraph)
+function iso_matrix(G::UG, H::UG)
     n = NV(G)
 
     if !fast_iso_test_basic(G, H)
@@ -49,7 +49,7 @@ end
 """
 `is_iso(G,H,d)` checks if `d` is an isomorphism from `G` to `H`.
 """
-function is_iso(G::SimpleGraph, H::SimpleGraph, d::Dict)::Bool
+function is_iso(G::UG, H::UG, d::Dict)::Bool
     n = NV(G)
 
     # standard quick check
@@ -88,7 +88,7 @@ end
 `is_iso(G,H)` returns `true` if the two graphs are isomorphic and `false`
 otherwise.
 """
-function is_iso(G::SimpleGraph, H::SimpleGraph)::Bool
+function is_iso(G::UG, H::UG)::Bool
     try
         f = iso(G, H)
     catch
@@ -104,7 +104,7 @@ degree sequences. Returns `false` if the graphs fail this very basic
 test of isomorphism. A `true` result does *not* imply the graphs are
 isomorphic.
 """
-function fast_iso_test_basic(G::SimpleGraph, H::SimpleGraph)::Bool
+function fast_iso_test_basic(G::UG, H::UG)::Bool
     if NV(G) != NV(H) || NE(G) != NE(H) || deg(G) != deg(H)
         return false
     end
@@ -117,7 +117,7 @@ the graphs *might* be isomorphic. A `false` return certifies the
 graphs are **not** isomorphic; a `true` result indicates the
 graphs might be (indeed, likely are) isomorphic.
 """
-function fast_iso_test(G::SimpleGraph, H::SimpleGraph)::Bool
+function fast_iso_test(G::UG, H::UG)::Bool
     return fast_iso_test_basic(G, H) && uhash(G) == uhash(H)
 end
 
@@ -126,7 +126,7 @@ end
 row are the degrees of the neighbors of that vertex. The rows are
 lexicographically sorted.
 """
-function degdeg(G::SimpleGraph)
+function degdeg(G::UG)
     if cache_check(G, :degdeg)
         return cache_recall(G, :degdeg)
     end
@@ -157,7 +157,7 @@ but, we hope, nontwin vertices will have different values. (By *twin*
 we mean a pair of vertices such that there is an automorphism of the
 graph mapping one to the other.)
 """
-function info_map(G::SimpleGraph)
+function info_map(G::UG)
     if cache_check(G, :info_map)
         return cache_recall(G, :info_map)
     end
@@ -221,7 +221,7 @@ vertices of `G` to `H`.
 
 See also: `iso2`.
 """
-function iso(G::SimpleGraph, H::SimpleGraph)
+function iso(G::UG, H::UG)
 
     # quickly rule out some easily detected nonisomorphic graphs
     if !fast_iso_test(G, H) || uhash(G) != uhash(H)
@@ -320,7 +320,7 @@ end
 `iso2(G,H)` is another version of `iso(G,H)` that does much less preprocessing.
 It may be faster for highly symmetric graphs (e.g., vertex transitive graphs).
 """
-function iso2(G::SimpleGraph{S}, H::SimpleGraph{T}) where {S,T}
+function iso2(G::UG{S}, H::UG{T}) where {S,T}
     if NV(G) != NV(H)
         error(iso_err_msg)
     end
@@ -398,7 +398,7 @@ end
 graphs will produce the same value. We hope that nonisomorphic graphs
 will create different values, but, alas, that need not be the case.
 """
-function uhash(G::SimpleGraph)
+function uhash(G::UG)
     if cache_check(G, :uhash)
         return cache_recall(G, :uhash)
     end

@@ -5,7 +5,7 @@ export fractional_matching
 a dictionary mapping edges of `G` to rational values. These values are 
 in the set `{0, 1/2, 1}`.
 """
-function fractional_matching(G::SimpleGraph{T}) where {T}
+function fractional_matching(G::UG{T}) where {T}
 
     if cache_check(G, :fractional_matching)
         return cache_recall(G, :fractional_matching)

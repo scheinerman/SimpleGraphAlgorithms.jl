@@ -5,7 +5,7 @@ export kfactor
 with the property that every vertex of `G` is incident with exactly `k`
 edges in the set. An error is thrown if no such set exists.
 """
-function kfactor(G::SimpleGraph, k::Int = 1)
+function kfactor(G::UG, k::Int = 1)
     @assert k > 0 "The parameter k must be positive"
 
     VV = vlist(G)

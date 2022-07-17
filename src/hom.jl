@@ -4,7 +4,7 @@ export hom, hom_check
 `hom_check(G,H,d)` checks if the dictionary `d` is a graph homomorphism
 from `G` to `H`.
 """
-function hom_check(G::SimpleGraph, H::SimpleGraph, d::Dict)::Bool
+function hom_check(G::UG, H::UG, d::Dict)::Bool
     for e in G.E
         v, w = e
         x = d[v]
@@ -19,7 +19,7 @@ end
 """
 `hom(G,H)` finds a graph homomorphism from `G` to `H`.
 """
-function hom(G::SimpleGraph{S}, H::SimpleGraph{T}) where {S,T}
+function hom(G::UG{S}, H::UG{T}) where {S,T}
 
 
     m = Model(get_solver())

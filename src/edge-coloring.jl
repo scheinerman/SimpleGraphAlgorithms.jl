@@ -4,7 +4,7 @@ export edge_color, edge_chromatic_number
 `edge_color(G,k)` returns a proper `k`-edge coloring of `G` or
 throws an error if one does not exist.
 """
-function edge_color(G::SimpleGraph, k::Int)
+function edge_color(G::UG, k::Int)
     err_msg = "This graph is not $k-edge colorable"
     Delta = maximum(deg(G))
     if k < Delta
@@ -71,7 +71,7 @@ end
 `edge_chromatic_number(G)` returns the edge chromatic number
 of the graph `G`.
 """
-function edge_chromatic_number(G::SimpleGraph)::Int
+function edge_chromatic_number(G::UG)::Int
     if cache_check(G, :edge_chromatic_number)
         return cache_recall(G, :edge_chromatic_number)
     end

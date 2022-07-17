@@ -60,9 +60,9 @@ import SimpleGraphs.cache_save
 
 """
 `max_indep_set(G)` returns a maximum size independent set of a
-`SimpleGraph`.
+`UndirectedGraph`.
 """
-function max_indep_set(G::SimpleGraph)
+function max_indep_set(G::UG)
     if cache_check(G, :max_indep_set)
         return cache_recall(G, :max_indep_set)
     end
@@ -97,7 +97,7 @@ such that at least `k` edges are indicent with a vertex in `S`.
 """
 min_vertex_cover(G) = setdiff(G.V, max_indep_set(G))
 
-function min_vertex_cover(G::SimpleGraph, k::Int)
+function min_vertex_cover(G::UG, k::Int)
     MOD = Model(get_solver())
     Vs = vlist(G)
     Es = elist(G)
@@ -129,9 +129,9 @@ function min_vertex_cover(G::SimpleGraph, k::Int)
 end
 
 """
-`max_clique(G)` returns a maximum size clique of a `SimpleGraph`.
+`max_clique(G)` returns a maximum size clique of a `UndirectedGraph`.
 """
-function max_clique(G::SimpleGraph)
+function max_clique(G::UG)
     if cache_check(G, :max_clique)
         return cache_recall(G, :max_clique)
     end
@@ -141,9 +141,9 @@ function max_clique(G::SimpleGraph)
 end
 
 """
-`max_matching(G)` returns a maximum matching of a `SimpleGraph`.
+`max_matching(G)` returns a maximum matching of a `UndirectedGraph`.
 """
-function max_matching(G::SimpleGraph)
+function max_matching(G::UG)
     if cache_check(G, :max_matching)
         return cache_recall(G, :max_matching)
     end
@@ -176,7 +176,7 @@ end
 every vertex of `G` is the end point of at least one edge in `F`. An
 error is raised if `G` has a vertex of degree 0.
 """
-function min_edge_cover(G::SimpleGraph)
+function min_edge_cover(G::UG)
     if cache_check(G, :min_edge_cover)
         return cache_recall(G, :min_edge_cover)
     end
@@ -216,11 +216,11 @@ end
 
 """
 `min_dom_set(G)` returns a smallest dominating set of a
-`SimpleGraph`. That is, a smallest set `S` with the property that
+`UG`. That is, a smallest set `S` with the property that
 every vertex of `G` either is in `S` or is adjacent to a vertex of
 `S`.
 """
-function min_dom_set(G::SimpleGraph)
+function min_dom_set(G::UG)
     if cache_check(G, :min_dom_set)
         return cache_recall(G, :min_dom_set)
     end
