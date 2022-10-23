@@ -136,7 +136,7 @@ such an edge cut set.
 
 ## Examples
 
-```julia
+```
 julia> using SimpleGraphs; using SimpleGraphAlgorithms; using ChooseOptimizer; using ShowSet
 
 julia> set_solver_verbose(false)
@@ -181,7 +181,7 @@ Dict{Int64,Int64} with 17 entries:
 Petersen's graph can be described as either the 5,2-Kneser graph or as
 the complement of the line graph of K(5).
 
-```julia
+```
 julia> G = Kneser(5,2);
 
 julia> H = complement(line_graph(Complete(5)));
@@ -234,3 +234,36 @@ solver does its work.
 To switch back to the `Cbc` solver, do `use_Cbc()`.
 
 These functions rely on my `ChooseOptimizer` module.
+
+
+## Using `SimpleGraphAlgorithms` with `Graphs`
+
+`SimpleGraphAlgorithms` is built to work with `UndirectedGraph` objects as defined in `SimpleGraphs`. 
+To apply these functions to graphs from Julia's `Graphs` module, you can use `SimpleGraphConverter` like this:
+```
+julia> using Graphs, SimpleGraphAlgorithms, SimpleGraphs, SimpleGraphConverter
+
+julia> use_Cbc()
+[ Info: Solver Cbc verbose is set to false
+
+julia> g = circular_ladder_graph(9)
+{18, 27} undirected simple Int64 graph
+
+julia> chromatic_number(UG(g))
+Welcome to the CBC MILP Solver 
+Version: 2.10.5 
+Build Date: Dec  4 2021 
+
+command line - Cbc_C_Interface -LogLevel 0 -solve -quit (default strategy 1)
+Welcome to the CBC MILP Solver 
+Version: 2.10.5 
+Build Date: Dec  4 2021 
+
+command line - Cbc_C_Interface -LogLevel 0 -solve -quit (default strategy 1)
+Welcome to the CBC MILP Solver 
+Version: 2.10.5 
+Build Date: Dec  4 2021 
+
+command line - Cbc_C_Interface -LogLevel 0 -solve -quit (default strategy 1)
+3
+```
