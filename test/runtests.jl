@@ -47,13 +47,13 @@ end
 
 # Vertex coloring
 @testset "Coloring" begin
-    G = Paley(17)
+    G = Cycle(7)
     f = vertex_color(G, 6)
-    @test length(f) == 17
+    @test length(f) == NV(G)
 
     # Edge coloring
-    @test edge_chromatic_number(G) == 9
-    f = edge_color(G, 9)
+    @test edge_chromatic_number(G) == 3
+    f = edge_color(G, 3)
     @test length(f) == NE(G)
 end
 
