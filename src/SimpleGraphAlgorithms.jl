@@ -1,12 +1,12 @@
 module SimpleGraphAlgorithms
 using SimpleGraphs
 using JuMP
-using Cbc, ChooseOptimizer
+using GLPK, ChooseOptimizer
 
-_SOLVER = Cbc       # this is used by JuMP
+_SOLVER = GLPK      # this is used by JuMP
 _OPTS = Dict()        # to pass options to JuMP optimizers
 
-export use_Cbc, use_Gurobi, use_optimizer
+export use_Gurobi, use_optimizer, use_GLPK
 
 
 """
@@ -14,7 +14,7 @@ export use_Cbc, use_Gurobi, use_optimizer
 optimization package and package options to be used by functions
 in `SimpleGraphAlgorithms` (and `SimplePosetAlgorithms`).
 
-See `use_Cbc` and `use_Gurobi`.
+See `use_GLPK` and `use_Gurobi`.
 """
 function use_optimizer(choice::Module, options::Dict = Dict())
     global _SOLVER = choice
@@ -28,7 +28,7 @@ end
 to be the `Gurobi` solver. Requires the user to invoke
 `using Gurobi` first.
 
-See also `use_Cbc`.
+See also `use_GLPK`.
 """
 function use_Gurobi(verbose::Bool = false)
     set_solver(Main.Gurobi)
@@ -37,20 +37,20 @@ function use_Gurobi(verbose::Bool = false)
 end
 
 """
-`use_Cbc(verbose=false)` sets the optimization software
-to be the `Cbc` solver. This is set by default when `SimpleGraphAlgorithms`
+`use_GLPK(verbose=false)` sets the optimization software
+to be the `GLPK` solver. This is set by default when `SimpleGraphAlgorithms`
 is loaded.
 
 See also `use_Gurobi`.
 """
-function use_Cbc(verbose::Bool = false)
-    set_solver(Cbc)
+function use_GLPK(verbose::Bool = false)
+    set_solver(GLPK)
     set_solver_verbose(verbose)
     nothing
 end
 
-# Use Cbc in nonverbose mode until told otherwise
-use_Cbc()
+# Use GLPK in nonverbose mode until told otherwise
+use_GLPK()
 
 
 export max_indep_set, max_clique, max_matching, min_dom_set
