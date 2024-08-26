@@ -1,56 +1,13 @@
 module SimpleGraphAlgorithms
 using SimpleGraphs
 using JuMP
-using GLPK, ChooseOptimizer
+using ChooseOptimizer
 
-_SOLVER = GLPK      # this is used by JuMP
-_OPTS = Dict()        # to pass options to JuMP optimizers
-
-export use_Gurobi, use_optimizer, use_GLPK
-
-
-"""
-`use_optimizer(choice::Module, options::Dict)` chooses the
-optimization package and package options to be used by functions
-in `SimpleGraphAlgorithms` (and `SimplePosetAlgorithms`).
-
-See `use_GLPK` and `use_Gurobi`.
-"""
-function use_optimizer(choice::Module, options::Dict = Dict())
-    global _SOLVER = choice
-    global _OPTS = deepcopy(options)
-
-    nothing
+function __init__()
+    set_solver_verbose(false)
 end
 
-"""
-`use_Gurobi(verbose=false)` sets the optimization software
-to be the `Gurobi` solver. Requires the user to invoke
-`using Gurobi` first.
 
-See also `use_GLPK`.
-"""
-function use_Gurobi(verbose::Bool = false)
-    set_solver(Main.Gurobi)
-    set_solver_verbose(verbose)
-    nothing
-end
-
-"""
-`use_GLPK(verbose=false)` sets the optimization software
-to be the `GLPK` solver. This is set by default when `SimpleGraphAlgorithms`
-is loaded.
-
-See also `use_Gurobi`.
-"""
-function use_GLPK(verbose::Bool = false)
-    set_solver(GLPK)
-    set_solver_verbose(verbose)
-    nothing
-end
-
-# Use GLPK in nonverbose mode until told otherwise
-use_GLPK()
 
 
 export max_indep_set, max_clique, max_matching, min_dom_set

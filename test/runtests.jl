@@ -102,4 +102,3 @@ end
     @test edge_connectivity(G) == 2
     @test connectivity(G) == 1
 end
-
